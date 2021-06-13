@@ -4,19 +4,25 @@
 #include <stdio.h>
 #include <string>
 
+// rename these for convenience
 typedef uint8_t uchar;
 typedef uint16_t ushort;
 typedef uint32_t uint;
 typedef uint64_t ulong;
 
+// cast x to a compatible type T
 #define CAST(T, x) static_cast<T>(x)
+// cast x to type T
 #define PUN(T, x) *(T*)&x
 
 namespace math
 {
+	// maximum value considered to be "zero"
+	static float EPSILON = .0001f;
 	constexpr static float PI = 3.14159265359f, E = 2.71828182846f;
 
 
+	// |t|
 	template<typename T>
 	static T abs(const T& t)
 	{
@@ -32,6 +38,8 @@ namespace math
 	{
 		return a > b ? a : b;
 	}
+	// returns a if it is in [lo, hi]. Otherwise, returns
+	// whichever of lo and hi is closest to a.
 	template<typename A, typename B, typename C>
 	static const A& clamp(const A& a, const B& lo, const C& hi)
 	{
@@ -42,7 +50,6 @@ namespace math
 	{
 		return std::sqrt(t);
 	}
-
 	template<typename T>
 	static T sin(const T& t)
 	{
@@ -58,7 +65,6 @@ namespace math
 	{
 		return std::tan(t);
 	}
-
 	template<typename T>
 	static T asin(const T& t)
 	{
@@ -81,19 +87,16 @@ namespace math
 		const B dy = y1 - y2;
 		return sqrt(dx * dx + dy * dy);
 	}
-
-
-	static float EPSILON = .0001f;
 	static void setEpsilon(float f)
 	{
 		EPSILON = f;
 	}
+	// account for negative values by using |t|
 	template<typename T>
 	static bool isZero(const T& t)
 	{
 		return abs(t) <= EPSILON;
 	}
-
 	template<typename T>
 	static bool rad(const T& t)
 	{
@@ -104,21 +107,25 @@ namespace math
 	{
 		return t * PI / 180;
 	}
+	// number of elements in a compile-time array
 	template<typename T, uint N>
 	static uint arrlen(const T(&arr)[N])
 	{
 		return N;
 	}
+	// size in bytes of a compile-time array
 	template<typename T, uint N>
 	static uint arrsize(const T(&arr)[N])
 	{
 		return N * sizeof(T);
 	}
+	// converts each character in s to lowercase
 	static void toLower(std::string& s)
 	{
 		for (uint i = 0; i < s.size(); i++)
 			s[i] = tolower(s[i]);
 	}
+	// returns toLower(a) == toLower(b)
 	static bool equalsIgnoreCase(const std::string& a, const std::string& b)
 	{
 		if (a.size() != b.size())
