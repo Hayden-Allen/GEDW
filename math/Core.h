@@ -97,16 +97,22 @@ namespace math
 	{
 		return abs(t) <= EPSILON;
 	}
+
+
+	// These were previously totally messed up.
+	// They both returned bools (?) and I flipped the names.
 	template<typename T>
-	static bool rad(const T& t)
+	static float deg(const T& t)
 	{
 		return t * 180 / PI;
 	}
 	template<typename T>
-	static bool deg(const T& t)
+	static float rad(const T& t)
 	{
 		return t * PI / 180;
 	}
+
+
 	// number of elements in a compile-time array
 	template<typename T, uint N>
 	static uint arrlen(const T(&arr)[N])

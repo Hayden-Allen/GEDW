@@ -41,5 +41,11 @@
     <ClInclude Include="math\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="math\Vec2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Range.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
