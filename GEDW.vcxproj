@@ -184,6 +184,8 @@
     <ClInclude Include="deps\include\glew.h" />
     <ClInclude Include="deps\include\glfw3.h" />
     <ClInclude Include="deps\include\glfw3native.h" />
+    <ClInclude Include="gfx\All.h" />
+    <ClInclude Include="gfx\Core.h" />
     <ClInclude Include="math\All.h" />
     <ClInclude Include="math\Core.h" />
     <ClInclude Include="math\Range.h" />

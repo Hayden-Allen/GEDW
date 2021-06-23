@@ -47,5 +47,11 @@
     <ClInclude Include="math\Range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gfx\All.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

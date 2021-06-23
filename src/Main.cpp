@@ -2,63 +2,144 @@
 
 int main()
 {
-	// I mixed up lvalues and rvalues a couple times last lecture.
-	// To reiterate:
-	//		- lvalues are variables (they can appear on the LEFT of an assignment operation)
-	//		- rvalues are things computed on the fly, whose data exists but isn't assigned to a variable
+	// 800x600 window called "Title" with a solid blue background
+	gfx::OpenGLInstance gl = gfx::init(800, 600, "Title", { .clear = {.b = 1.f } });
 
-	// Also, std::move gives an rvalue reference to its argument, regardless of the type of that argument. So value => rvalue, lvalue => rvalue, and rvalue => rvalue
+	/**
+	 * CPU step 1 - create vertex data
+	 */
+	// create a vertex array to store vertex data and metadata
+	uint va;
+	glGenVertexArrays(1, &va);
+	// bind it so that the following operations will affect it
+	glBindVertexArray(va);
 
-	// someone said that having T f() const means the value returned by the function is const.
-	// if we wanted to do that, we would write const T f() const. 
-	// The const following the method name means the object that the method belongs to will not change
-	// as a result of the method.
-
-	// use the element-wise constructor
-	printf("a\n");
-	math::Vec2<float> a(1.f, 2.f);
-	// the add operator creates a new vec2 via the element-wise constructor and the compiler moves it straight into b. I'm making b an rvalue reference for later demonstration.
-	printf("b\n");
-	math::Vec2<float>&& b = a + 5;
-
-	// in this case, c1 is assigned directly to the value returned by the add operator by the compiler - an optimization that prevents our move constructor from being called
-	printf("\n\nc1\n");
-	math::Vec2<float> c1(a + 5);
-
-	// the element-wise constructor is called from the add operator, so we see that first. However, the compiler sees std::move and knows that we now want to operate specifically on an rvalue. So in this case, rather than making c2 point to the vector returned by the add operator (as it did for c1), the compiler calls the move constructor.
-	printf("c2\n");
-	math::Vec2<float> c2(std::move(a + 5));
-
-	// here the COPY constructor is invoked, even though b is an rvalue reference. This is a weird quirk - NAMED rvalue references are treated as lvalue references. Therefore, b gets captured by the copy constructor, which accepts an lvalue reference.
-	printf("c3\n");
-	math::Vec2<float> c3(b);
-
-	// here the MOVE constructor is invoked. Once again, b alone would be treated as an lvalue reference because it is a NAMED rvalue reference. The std::move function, however, returns an rvalue reference to its argument. This rvalue reference is truly temporary (i.e. NOT NAMED), and therefore the result of std::move(b) is correctly captured by the MOVE constructor
-	printf("c4\n");
-	math::Vec2<float> c4(std::move(b));
-
-
-
-	// Constructors are ALWAYS invoked for the initial creation of an object. You can see that these variables, even though they use = instead of a constructor call, give the exact same output as above.
-	printf("\n\nd1\n");
-	math::Vec2<float> d1 = a + 5;
-	printf("d2\n");
-	math::Vec2<float> d2 = std::move(a + 5);
-	printf("d3\n");
-	math::Vec2<float> d3 = b;
-	printf("d4\n");
-	math::Vec2<float> d4 = std::move(b);
+	// Create a vertex buffer to store vertex data. It's important
+	// that we do this AFTER binding our vertex array (see step 2).
+	uint vbo;
+	glGenBuffers(1, &vbo);
+	// Some test vertex data. Counter clockwise order from bottom left.
+	// The order here doesn't matter (because we're using an index buffer),
+	// but it simplifies the index ordering (see step 3).
+	float vertices[] =
+	{
+		// bottom left
+		-.5f, -.5f,
+		// bottom right
+		.5f, -.5f,
+		// top right
+		.5f, .5f,
+		// top left
+		-.5f, .5f
+	};
+	// Send our test vertex data to our vertex buffer. Because we're only doing this
+	// once, GL_STATIC_DRAW works fine.
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, math::arrsize(vertices), vertices, GL_STATIC_DRAW);
 
 
+	/**
+	 * CPU step 2 - describe vertex data
+	 */
+	// NOTE: this 0 corresponds to the layout(location = 0) in our vertex shader.
+	// OpenGL knows that this metadata corresponds to our specific vertex buffer
+	// because we have bound a vertex array.
+	glEnableVertexAttribArray(0);
+	// Operate on index 0. We have 2 elements per vertex. Our data type is floats.
+	// Our floats are not normalized. The size of each vertex is 2 floats. This group
+	// is not offset from the start of the vertex at all (that is, 0 bytes).
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*)0);
 
-	// However, now that these variables have been given an initial value (and the mandatory initial constructor call is out of the way), the = operator CAN take on a different meaning.
-	printf("\n\n2d1\n");
-	d1 = d2;
-	printf("2d2\n");
-	d2 = std::move(d3);
-	printf("2d3\n");
-	d3 = d1 + d2;
-	printf("2d4\n");
-	d4 = std::move(d1 + d2);
+
+	/**
+	 * CPU step 3 - create index data
+	 */
+	// create an index buffer
+	uint ibo;
+	glGenBuffers(1, &ibo);
+	// Because of the ordering of our vertex data in step 1, this is very simple.
+	// We have two triangles, one between the bottom left, bottom right, and top right
+	// vertices, and the second between the bottom left, top right, and top left vertices.
+	uint indices[] = { 0, 1, 2, 0, 2, 3 };
+	// same as step 1, upload our data to the GPU.
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, math::arrsize(indices), indices, GL_STATIC_DRAW);
+
+	
+	/**
+	 * GPU steps 4+6 - vertex and fragment shaders
+	 */
+	// create space for our shaders
+	uint vertex = glCreateShader(GL_VERTEX_SHADER);
+	uint fragment = glCreateShader(GL_FRAGMENT_SHADER);
+
+	// this simply takes the data from our vertex buffer
+	// and outputs it (unmodified) as a vec4
+	const char* vertexSource =
+		"#version 330 core\n"
+		"layout(location = 0) in vec2 i_Position;\n"
+		"void main() {\n"
+		"    gl_Position = vec4(i_Position, 0, 1);\n"
+		"}";
+	// this sets every pixel to be solid red
+	const char* fragmentSource =
+		"#version 330 core\n"
+		"layout(location = 0) out vec4 o_Color;\n"
+		"void main() {\n"
+		"    o_Color = vec4(1, 0, 0, 1);\n"
+		"}";
+
+	// give our shaders the source code and compile them
+	glShaderSource(vertex, 1, &vertexSource, nullptr);
+	glShaderSource(fragment, 1, &fragmentSource, nullptr);
+	glCompileShader(vertex);
+	glCompileShader(fragment);
+
+	// Check for compilation errors. Eventually, we will print
+	// the actual error output, but for now this is enough.
+	int result;
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE)
+		printf("Vertex shader compilation failed\n");
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE)
+		printf("Fragment shader compilation failed\n");
+
+	// create a program to store both of our shaders
+	uint program = glCreateProgram();
+	// attach both shaders
+	glAttachShader(program, vertex);
+	glAttachShader(program, fragment);
+	// finalize the program
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	// our shaders are now within our program,
+	// so we can delete the originals
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+
+	// game loop
+	while (gl.IsRunning())
+	{
+		// clear the screen at the start of each frame
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// draw everything
+		glUseProgram(program);
+		glBindVertexArray(va);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glDrawElements(GL_TRIANGLES, math::arrlen(indices), GL_UNSIGNED_INT, nullptr);
+
+		// once everything has been drawn, display it on the screen
+		glfwSwapBuffers(gl.window);
+		// check for input events (mouse, keyboard, etc.)
+		glfwPollEvents();
+	}
+
+
+	// clean up
+	gfx::end(gl);
 	return 0;
 }
