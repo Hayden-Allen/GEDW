@@ -8,19 +8,15 @@ namespace math
 		T x, y;
 
 
-		Vec2(const T& _x, const T& _y) : x(_x), y(_y) {
-			printf("ELEMENT\n");
-		}
+		Vec2(const T& _x, const T& _y) : x(_x), y(_y) {}
 		// copy constructor
 		Vec2(const Vec2<T>& other)
 		{
-			printf("COPY\n");
 			operator=(other);
 		}
 		// move constructor (compiler wants "noexcept" even though it's irrelevant to us)
 		Vec2(Vec2<T>&& other) noexcept
 		{
-			printf("MOVE\n");
 			operator=(other);
 		}
 
@@ -38,7 +34,6 @@ namespace math
 		// copy values from other into this
 		Vec2<T>& operator=(const Vec2<T>& other)
 		{
-			printf("EQUALS\n");
 			x = other.x;
 			y = other.y;
 			return *this;
