@@ -29,19 +29,19 @@ namespace math
 		return t < 0 ? -t : t;
 	}
 	template<typename A, typename B>
-	static const A& min(const A& a, const B& b)
+	static A min(const A& a, const B& b)
 	{
-		return a < b ? a : b;
+		return a < b ? a : CAST(A, b);
 	}
 	template<typename A, typename B>
-	static const A& max(const A& a, const B& b)
+	static A max(const A& a, const B& b)
 	{
-		return a > b ? a : b;
+		return a > b ? a : CAST(A, b);
 	}
 	// returns a if it is in [lo, hi]. Otherwise, returns
 	// whichever of lo and hi is closest to a.
 	template<typename A, typename B, typename C>
-	static const A& clamp(const A& a, const B& lo, const C& hi)
+	static A clamp(const A& a, const B& lo, const C& hi)
 	{
 		return max(min(a, hi), lo);
 	}

@@ -189,13 +189,20 @@
     <ClInclude Include="gfx\Core.h" />
     <ClInclude Include="gfx\GLObject.h" />
     <ClInclude Include="gfx\IndexBuffer.h" />
+    <ClInclude Include="gfx\Renderer.h" />
+    <ClInclude Include="gfx\RenderObject.h" />
+    <ClInclude Include="gfx\Shader.h" />
     <ClInclude Include="gfx\VertexArray.h" />
     <ClInclude Include="gfx\VertexBuffer.h" />
     <ClInclude Include="math\All.h" />
     <ClInclude Include="math\Core.h" />
     <ClInclude Include="math\Range.h" />
     <ClInclude Include="math\Vec2.h" />
+    <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
