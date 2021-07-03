@@ -7,6 +7,12 @@ namespace gfx
 	public:
 		Shader(const char* fp)
 		{
+			// This can't be set at boot time because gl won't have been bound yet.
+			// Set it in the first invocation of this constructor; if the user is
+			// calling this before calling gfx::init, that's their fault.
+			if (!s_Macros.contains("%MAX_TEXTURES%"))
+				s_Macros.insert({ "%MAX_TEXTURES%", std::to_string(getMaxTextureUnits()) });
+
 			m_Id = glCreateProgram();
 			// split input file into vertex and fragment components
 			ShaderSources sources = Parse(fp);
@@ -47,6 +53,10 @@ namespace gfx
 		{
 			SetUniform(glUniform2f, name, x, y);
 		}
+		void SetUniform1iv(const std::string& name, uint length, const int* const data)
+		{
+			SetUniform(glUniform1iv, name, length, data);
+		}
 	private:
 		struct ShaderSources
 		{
@@ -54,6 +64,7 @@ namespace gfx
 		};
 
 
+		static inline std::unordered_map<std::string, std::string> s_Macros;
 		std::unordered_map<std::string, int> m_UniformCache;
 
 
@@ -119,7 +130,11 @@ namespace gfx
 				}
 				// current line is regular shader code, append it to its stream
 				else
+				{
+					for (auto& pair : s_Macros)
+						line = std::regex_replace(line, std::regex(pair.first), pair.second);
 					streams[currentType] << line << '\n';
+				}
 			}
 
 			in.close();

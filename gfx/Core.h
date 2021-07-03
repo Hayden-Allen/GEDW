@@ -88,4 +88,10 @@ namespace gfx
 		glfwDestroyWindow(instance.window);
 		glfwTerminate();
 	}
+	static int getMaxTextureUnits()
+	{
+		int result;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &result);
+		return result;
+	}
 }

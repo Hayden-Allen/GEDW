@@ -7,6 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include <numeric>
+#include <regex>
 
 #include "math/All.h"
 #include "gfx/All.h"

@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\graphics\Sprite.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -192,6 +193,7 @@
     <ClInclude Include="gfx\Renderer.h" />
     <ClInclude Include="gfx\RenderObject.h" />
     <ClInclude Include="gfx\Shader.h" />
+    <ClInclude Include="gfx\Texture.h" />
     <ClInclude Include="gfx\VertexArray.h" />
     <ClInclude Include="gfx\VertexBuffer.h" />
     <ClInclude Include="math\All.h" />
@@ -199,10 +201,14 @@
     <ClInclude Include="math\Range.h" />
     <ClInclude Include="math\Vec2.h" />
     <ClInclude Include="src\Core.h" />
+    <ClInclude Include="src\graphics\Sprite.h" />
+    <ClInclude Include="src\io\File.h" />
+    <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
+    <None Include="res\shader_texture.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

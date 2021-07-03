@@ -7,4 +7,5 @@
 #include "IndexBuffer.h"
 #include "RenderObject.h"
 #include "Shader.h"
+#include "Texture.h"
 #include "Renderer.h"
