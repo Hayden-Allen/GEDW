@@ -27,6 +27,14 @@ namespace gfx
 			shader.Bind();
 			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 		}
+		void Draw(const RenderObject& obj, const Texture*const*const textures, uint count, const Shader& shader) const
+		{
+			obj.Bind();
+			for (uint i = 0; i < count; i++)
+				textures[i]->Bind(i);
+			shader.Bind();
+			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		}
 		void Render(const OpenGLInstance& gl) const
 		{
 			glfwSwapBuffers(gl.window);

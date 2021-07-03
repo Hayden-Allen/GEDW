@@ -33,7 +33,7 @@ namespace engine
 			return m_Height;
 		}
 	private:
-		constexpr static uint s_BitmapInfoSize = 54, s_BitmapInfoWidth = 18, s_BitmapInfoHeight = 22;
+		constexpr static uint s_BitmapInfoSize = 54, s_BitmapInfoWidth = 18, s_BitmapInfoHeight = 22, s_BytesPerPixel = 3, s_BitmapWidthStep = 4;
 		uint m_Width, m_Height, m_Frames, m_CurrentFrame, m_TimePerFrame;
 		float m_LastFrameSwitch;
 		gfx::Texture* m_Texture;

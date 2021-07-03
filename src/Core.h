@@ -2,15 +2,16 @@
 
 namespace engine
 {
-	constexpr static uint s_VerticesPerQuad = 4, s_IndicesPerQuad = 6;
+	constexpr static uint s_VerticesPerQuad = 4, s_IndicesPerQuad = 6, s_FloatsPerVertex = 5;
 	constexpr static uint s_IndexOffsets[s_IndicesPerQuad] = { 0, 1, 2, 0, 2, 3 };
 
 
 	struct EngineInstance
 	{
-		gfx::OpenGLInstance gl;
+		// store a pointer now so that resize functionality works with our window user pointer
+		gfx::OpenGLInstance* gl;
 
-		bool IsRunning() const { return gl.IsRunning(); }
+		bool IsRunning() const { return gl->IsRunning(); }
 	};
 
 
@@ -20,6 +21,8 @@ namespace engine
 	}
 	static void end(EngineInstance& instance)
 	{
-		gfx::end(instance.gl);
+		gfx::end(*instance.gl);
+		// our OpenGLInstance was dynamically allocated by gfx::init, so we need to free it when we're done
+		delete instance.gl;
 	}
 }
