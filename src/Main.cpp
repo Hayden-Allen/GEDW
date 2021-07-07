@@ -64,8 +64,8 @@ int main()
 		// move on x-axis according to A and D and y-axis according to W and S
 		math::Vec2<float> offset =
 		{
-			1.f * engine.gl->IsKeyPressed('A') - engine.gl->IsKeyPressed('D'),
-			1.f * engine.gl->IsKeyPressed('S') - engine.gl->IsKeyPressed('W')
+			1.f * engine.IsKeyPressed('A') - engine.IsKeyPressed('D'),
+			1.f * engine.IsKeyPressed('S') - engine.IsKeyPressed('W')
 		};
 		// scale by frame delta for smooth movement
 		offset *= camSpeed * renderer.GetFrameDelta();
