@@ -8,6 +8,10 @@ typedef uint32_t uint;
 
 namespace gfx
 {
+	struct Vec2
+	{
+		float x, y;
+	};
 	struct Color
 	{
 		float r = 0.f, g = 0.f, b = 0.f;
@@ -22,13 +26,15 @@ namespace gfx
 	{
 		GLFWwindow* window;
 		float psize, spwidth, spheight;
+		Vec2 scroll;
 
 
 		OpenGLInstance(GLFWwindow* win, int w, int h, float pixelSize) :
 			window(win),
 			psize(pixelSize),
 			spwidth(pixelSize * 2.f / w),
-			spheight(pixelSize * 2.f / h)
+			spheight(pixelSize * 2.f / h),
+			scroll{ 0.f, 0.f }
 		{
 			glViewport(0, 0, w, h);
 			glfwSetWindowUserPointer(win, this);
@@ -45,10 +51,29 @@ namespace gfx
 					instance->spheight = instance->psize * 2.f / height;
 				}
 			);
+
+			glfwSetScrollCallback(window,
+				[](GLFWwindow* window, double x, double y)
+				{
+					((OpenGLInstance*)glfwGetWindowUserPointer(window))->scroll = { (float)x, (float)y };
+				}
+			);
 		}
 
 
 		bool IsRunning() const { return !glfwWindowShouldClose(window); }
+		bool IsKeyPressed(uint key) const { return IsKey(key, GLFW_PRESS); }
+		bool IsMouseLeft() const { return IsMouse(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS); }
+		bool IsMouseRight() const { return IsMouse(GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS); }
+		Vec2 GetCursorPos() const
+		{
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			return { (float)x, (float)y };
+		}
+	private:
+		bool IsKey(uint key, uint state) const { return glfwGetKey(window, key) == state; }
+		bool IsMouse(uint key, uint state) const { return glfwGetMouseButton(window, key) == state; }
 	};
 
 

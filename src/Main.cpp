@@ -1,14 +1,13 @@
 #include "pch.h"
 #include "graphics/Sprite.h"
+#include "graphics/Renderer.h"
 
 using namespace engine;
 
 int main()
 {
 	EngineInstance engine = init(800, 600, "ACM Game Engine Dev Workshop Series", { .resizable = true, .pixelSize = 2.f, .clear = {.b = 1.f } });
-
-	const gfx::Renderer renderer;
-	gfx::Shader shader("res/shader_texture.glsl");
+	Renderer renderer("res/shader_texture.glsl", &engine);
 
 
 	Sprite sprite("res/test.bmp", 2, 500);
@@ -53,26 +52,34 @@ int main()
 	delete[] vertices;
 
 
+	math::Vec2<float> camera = { 0.f, 0.f };
+	const float camSpeed = 250.f;
+	std::vector<Sprite*> sprites = { &sprite };
 	// game loop
 	while (engine.IsRunning())
 	{
 		// clear the screen at the start of each frame
 		renderer.Clear();
 
-		// get current time in ms
-		float time = CAST(float, glfwGetTime() * 1000.f);
-		// switch our sprite's frame if necessary
-		sprite.Update(time);
-		// update frame on the gpu
-		int frame = sprite.GetCurrentFrame();
-		shader.SetUniform1iv("u_TextureFrames", 1, &frame);
-		// update scale in case our window was resized since last frame
-		shader.SetUniform2f("u_Scale", engine.gl->spwidth, engine.gl->spheight);
+		// move on x-axis according to A and D and y-axis according to W and S
+		math::Vec2<float> offset =
+		{
+			1.f * engine.gl->IsKeyPressed('A') - engine.gl->IsKeyPressed('D'),
+			1.f * engine.gl->IsKeyPressed('S') - engine.gl->IsKeyPressed('W')
+		};
+		// scale by frame delta for smooth movement
+		offset *= camSpeed * renderer.GetFrameDelta();
+		// if we are moving along both axes, scale appropriately to maintain a magnitude of `camSpeed`
+		if (!math::isZero(offset.x) && !math::isZero(offset.y))
+			offset /= math::sqrt(2.f);
+		camera += offset;
+		// update camera uniform
+		renderer.SetCamera(camera);
 
 		// draw everything
-		renderer.Draw(ro, *sprite.GetTexture(), shader);
+		renderer.Draw(ro, sprites);
 
-		renderer.Render(*engine.gl);
+		renderer.Render();
 	}
 
 	// clean up

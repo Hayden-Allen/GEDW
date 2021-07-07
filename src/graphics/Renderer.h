@@ -26,7 +26,8 @@ namespace engine
 		}
 		float GetFrameDelta() const
 		{
-			return m_FrameDelta;
+			// return in seconds for convenience
+			return m_FrameDelta / 1000.f;
 		}
 		float GetTime() const
 		{
@@ -34,6 +35,8 @@ namespace engine
 		}
 		void Render() const
 		{
+			// reset scroll state manually before we poll events because the scroll callback is not triggered when you stop scrolling
+			m_Engine->gl->scroll = { 0.f, 0.f };
 			m_Renderer.Render(*m_Engine->gl);
 		}
 	private:
