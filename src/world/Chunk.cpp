@@ -43,7 +43,7 @@ namespace engine
 					// insert our current Sprite with an empty vector
 					temp.insert({ sprite, std::vector<Tile>() });
 					// add new group to our list
-					groups.emplace_back(temp);
+					groups.push_back(temp);
 					// we added to the end, so the index is size-1
 					i = CAST(uint, groups.size() - 1);
 				}
