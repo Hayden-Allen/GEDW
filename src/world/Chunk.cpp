@@ -66,6 +66,6 @@ namespace engine
 
 		// now that our data is split up correctly, we can actually create SpriteGroups from it
 		for (auto& group : groups)
-			m_SpriteGroups.push_back(group);
+			m_SpriteGroups.emplace_back(group);
 	}
 }

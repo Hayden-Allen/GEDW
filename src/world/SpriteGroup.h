@@ -11,7 +11,12 @@ namespace engine
 	public:
 		SpriteGroup(const std::unordered_map<Sprite*, std::vector<Tile>>& data);
 		SpriteGroup(const SpriteGroup& group) = delete;
-		SpriteGroup(SpriteGroup&& group) = delete;
+		SpriteGroup(SpriteGroup&& group) noexcept :
+			m_RenderObject(group.m_RenderObject),
+			m_Sprites(std::move(group.m_Sprites))
+		{
+			group.m_RenderObject = nullptr;
+		}
 		~SpriteGroup()
 		{
 			delete m_RenderObject;

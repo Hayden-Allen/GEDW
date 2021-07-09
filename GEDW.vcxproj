@@ -183,6 +183,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\world\Chunk.cpp" />
+    <ClCompile Include="src\world\Map.cpp" />
     <ClCompile Include="src\world\SpriteGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -212,12 +213,16 @@
     <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\world\Chunk.h" />
+    <ClInclude Include="src\world\Map.h" />
     <ClInclude Include="src\world\SpriteGroup.h" />
     <ClInclude Include="src\world\Tile.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
     <None Include="res\shader_texture.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\map.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

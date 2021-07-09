@@ -36,6 +36,9 @@
     <ClCompile Include="src\world\Chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deps\include\glew.h">
@@ -122,9 +125,15 @@
     <ClInclude Include="src\world\Chunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\Map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
     <None Include="res\shader_texture.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\map.txt" />
   </ItemGroup>
 </Project>

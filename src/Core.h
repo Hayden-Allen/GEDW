@@ -26,6 +26,8 @@ namespace engine
 			auto temp = gl->scroll;
 			return { temp.x, temp.y };
 		}
+		void SetClearColor(float r, float g, float b) { gl->SetClearColor(r, g, b); }
+		void SetPixelSize(float size) { gl->SetPixelSize(size); }
 	};
 
 

@@ -25,12 +25,15 @@ namespace gfx
 	struct OpenGLInstance
 	{
 		GLFWwindow* window;
+		uint width, height;
 		float psize, spwidth, spheight;
 		Vec2 scroll;
 
 
 		OpenGLInstance(GLFWwindow* win, int w, int h, float pixelSize) :
 			window(win),
+			width(w),
+			height(h),
 			psize(pixelSize),
 			spwidth(pixelSize * 2.f / w),
 			spheight(pixelSize * 2.f / h),
@@ -70,6 +73,13 @@ namespace gfx
 			double x, y;
 			glfwGetCursorPos(window, &x, &y);
 			return { (float)x, (float)y };
+		}
+		void SetClearColor(float r, float g, float b) { glClearColor(r, g, b, 1.f); }
+		void SetPixelSize(float size)
+		{ 
+			psize = size;
+			spwidth = psize * 2.f / width;
+			spheight = psize * 2.f / height;
 		}
 	private:
 		bool IsKey(uint key, uint state) const { return glfwGetKey(window, key) == state; }
