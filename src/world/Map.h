@@ -38,6 +38,7 @@ namespace engine
 		void AddTile(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor);
 		void AddRect(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor);
 		void AddPattern(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor);
+		void AddLight(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor);
 		// SETTING
 		void UpdateSettings(std::ifstream& in, TopLevelParams& params);
 		void SetClearColor(std::ifstream& in, EngineInstance& engine);
@@ -91,7 +92,8 @@ namespace engine
 		{
 			{ "tile", &Map::AddTile },
 			{ "rect", &Map::AddRect },
-			{ "pattern", &Map::AddPattern }
+			{ "pattern", &Map::AddPattern },
+			{ "light", &Map::AddLight }
 		};
 		// stuff that can go in a SETTING block
 		typedef void(Map::* SettingFunc)(std::ifstream&, EngineInstance&);

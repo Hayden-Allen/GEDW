@@ -5,7 +5,9 @@
 namespace engine
 {
 	Chunk::Chunk(const ChunkConstructor& constructor) :
-		m_Pos(constructor.pos)
+		m_Pos(constructor.pos),
+		m_Lights(nullptr),
+		m_LightCount(0)
 	{
 		// we need to take the given list of Tiles and separate them out by Sprite
 		std::vector<std::unordered_map<Sprite*, std::vector<Tile>>> groups;
@@ -67,5 +69,21 @@ namespace engine
 		// now that our data is split up correctly, we can actually create SpriteGroups from it
 		for (auto& group : groups)
 			m_SpriteGroups.emplace_back(group);
+
+
+		auto ptr = constructor.lights.data();
+		m_LightCount = math::min(Light::s_MaxLightCount, constructor.lights.size());
+		// We're giving our buffer a pointer to our array of lights as a float pointer. This works because our Light struct only contains floats.
+		// The number of floats = (number of lights) * (number of bytes per light) / (number of bytes per float)
+		m_Lights = new gfx::UniformBuffer(m_LightCount * sizeof(Light) / sizeof(float), PUN(float*, ptr), 0);
+	}
+
+
+
+	void Chunk::Draw(Renderer& renderer) const
+	{
+		renderer.SetLights(m_LightCount, *m_Lights);
+		for (auto& group : m_SpriteGroups)
+			group.Draw(renderer);
 	}
 }

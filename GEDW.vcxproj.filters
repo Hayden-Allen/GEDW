@@ -128,6 +128,12 @@
     <ClInclude Include="src\world\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\UniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />

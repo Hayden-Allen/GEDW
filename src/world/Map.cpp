@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "graphics/SpriteBank.h"
 #include "graphics/Sprite.h"
+#include "Light.h"
 
 namespace engine
 {
@@ -94,6 +95,15 @@ namespace engine
 
 		// copy all data from the pattern into constructor at given offset
 		constructor.Merge(result->second, { x, y });
+	}
+	void Map::AddLight(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor)
+	{
+		Light light;
+
+		in >> light.pos.x >> light.pos.y >> light.intensity >> light.color[0] >> light.color[1] >> light.color[2];
+		light.pos += constructor.pos;
+
+		constructor.lights.push_back(light);
 	}
 	void Map::UpdateSettings(std::ifstream& in, TopLevelParams& params)
 	{

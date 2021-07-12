@@ -48,6 +48,9 @@ namespace engine
 
 		// update our scale in case our window has resized since last frame
 		m_Shaders.SetUniform2f("u_Scale", m_Engine->gl->spwidth, m_Engine->gl->spheight);
+
+		// YOU'LL NEED TO ENABLE THIS IF USING THE CONCENTRIC RINGS LIGHTING ALGORITHM
+		// m_Shaders.SetUniform1f("u_PixelSize", m_Engine->gl->psize);
 	}
 	void Renderer::Draw(const gfx::RenderObject& obj, const std::vector<Sprite*>& sprites)
 	{

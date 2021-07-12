@@ -13,7 +13,6 @@ int main()
 
 	SpriteBank sb;
 	Map map("res/map.txt", sb, engine);
-	
 
 	math::Vec2<float> camera = { 0.f, 0.f };
 	const float camSpeed = 250.f;

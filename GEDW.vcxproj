@@ -199,6 +199,7 @@
     <ClInclude Include="gfx\RenderObject.h" />
     <ClInclude Include="gfx\Shader.h" />
     <ClInclude Include="gfx\Texture.h" />
+    <ClInclude Include="gfx\UniformBuffer.h" />
     <ClInclude Include="gfx\VertexArray.h" />
     <ClInclude Include="gfx\VertexBuffer.h" />
     <ClInclude Include="math\All.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\world\Chunk.h" />
+    <ClInclude Include="src\world\Light.h" />
     <ClInclude Include="src\world\Map.h" />
     <ClInclude Include="src\world\SpriteGroup.h" />
     <ClInclude Include="src\world\Tile.h" />

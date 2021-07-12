@@ -45,6 +45,10 @@ namespace gfx
 		{
 			glUseProgram(0);
 		}
+		void SetUniform1i(const std::string& name, int i)
+		{
+			SetUniform(glUniform1i, name, i);
+		}
 		void SetUniform1f(const std::string& name, float f)
 		{
 			SetUniform(glUniform1f, name, f);
@@ -53,9 +57,23 @@ namespace gfx
 		{
 			SetUniform(glUniform2f, name, x, y);
 		}
+		void SetUniform3f(const std::string& name, float x, float y, float z)
+		{
+			SetUniform(glUniform3f, name, x, y, z);
+		}
 		void SetUniform1iv(const std::string& name, uint length, const int* const data)
 		{
 			SetUniform(glUniform1iv, name, length, data);
+		}
+		void SetUniformBlock(const std::string& name, const UniformBuffer& buffer)
+		{
+			int location = GetUniformBlockLocation(name);
+			if (location == -1)
+				return;
+
+			Bind();
+			buffer.Bind();
+			glUniformBlockBinding(m_Id, location, buffer.GetSlot());
 		}
 	private:
 		struct ShaderSources
@@ -75,7 +93,16 @@ namespace gfx
 			Bind();
 			fn(GetUniformLocation(name), args...);
 		}
+		int GetUniformBlockLocation(const std::string& name)
+		{
+			return GetLocation(glGetUniformBlockIndex, name);
+		}
 		int GetUniformLocation(const std::string& name)
+		{
+			return GetLocation(glGetUniformLocation, name);
+		}
+		template<typename T>
+		int GetLocation(T fn, const std::string& name)
 		{
 			// if we've already found a uniform with given name, return cached value
 			auto cached = m_UniformCache.find(name);
@@ -83,7 +110,7 @@ namespace gfx
 				return cached->second;
 
 			// otherwise, search for it
-			int location = glGetUniformLocation(m_Id, name.c_str());
+			int location = fn(m_Id, name.c_str());
 			// doesn't exist, don't cache it
 			if (location == -1)
 			{
