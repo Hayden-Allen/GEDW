@@ -12,7 +12,7 @@ namespace engine
 		{
 			gfx::Shader statics;
 
-			void SetUniform1i(const char* name, uint i)
+			void SetUniform1i(const char* name, int i)
 			{
 				statics.SetUniform1i(name, i);
 			}
