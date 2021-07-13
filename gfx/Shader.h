@@ -10,7 +10,8 @@ namespace gfx
 			// This can't be set at boot time because gl won't have been bound yet.
 			// Set it in the first invocation of this constructor; if the user is
 			// calling this before calling gfx::init, that's their fault.
-			if (!s_Macros.contains("%MAX_TEXTURES%"))
+			auto it = s_Macros.find("%MAX_TEXTURES%");
+			if (it == s_Macros.end())
 				s_Macros.insert({ "%MAX_TEXTURES%", std::to_string(getMaxTextureUnits()) });
 
 			m_Id = glCreateProgram();
