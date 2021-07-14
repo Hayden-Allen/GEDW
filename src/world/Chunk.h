@@ -55,7 +55,7 @@ namespace engine
 	private:
 		math::Vec2<float> m_Pos;
 		std::vector<SpriteGroup> m_SpriteGroups;
-		gfx::UniformBuffer* m_Lights;
+		gfx::UniformBuffer<GL_STATIC_DRAW>* m_Lights;
 		uint m_LightCount;
 	};
 }

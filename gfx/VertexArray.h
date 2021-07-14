@@ -3,6 +3,7 @@
 namespace gfx
 {
 	// VAO - stores a VBO and a description of that VBO
+	template<GLenum USAGE>
 	class VertexArray : public GLObject
 	{
 	public:
@@ -57,8 +58,12 @@ namespace gfx
 			// (number of elements) / (number of elements per vertex)
 			return m_Buffer.GetCount() / m_VertexSize;
 		}
+		VertexBuffer<USAGE>& GetBuffer()
+		{
+			return m_Buffer;
+		}
 	private:
-		VertexBuffer m_Buffer;
+		VertexBuffer<USAGE> m_Buffer;
 		uint m_VertexSize;
 	};
 }

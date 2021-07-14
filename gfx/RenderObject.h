@@ -3,6 +3,7 @@
 namespace gfx
 {
 	// combines a VA with an IB for convenience
+	template<GLenum VA, GLenum IB>
 	class RenderObject
 	{
 	public:
@@ -23,8 +24,12 @@ namespace gfx
 		{
 			return m_IndexBuffer.GetCount();
 		}
+		VertexArray<VA>& GetVertexArray()
+		{
+			return m_VertexArray;
+		}
 	private:
-		VertexArray m_VertexArray;
-		IndexBuffer m_IndexBuffer;
+		VertexArray<VA> m_VertexArray;
+		IndexBuffer<IB> m_IndexBuffer;
 	};
 }

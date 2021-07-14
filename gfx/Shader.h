@@ -66,7 +66,8 @@ namespace gfx
 		{
 			SetUniform(glUniform1iv, name, length, data);
 		}
-		void SetUniformBlock(const std::string& name, const UniformBuffer& buffer)
+		template<GLenum USAGE>
+		void SetUniformBlock(const std::string& name, const UniformBuffer<USAGE>& buffer)
 		{
 			int location = GetUniformBlockLocation(name);
 			if (location == -1)

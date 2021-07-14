@@ -164,5 +164,14 @@ namespace math
 		{
 			return acos(Dot(other) / (Magnitude() * other.Magnitude()));
 		}
+		Vec2<T>& Clamp(const T& lo, const T& hi)
+		{
+			const T mag = Magnitude();
+			if (mag < lo)
+				return Normalize() *= lo;
+			if (mag > hi)
+				return Normalize() *= hi;
+			return *this;
+		}
 	};
 }

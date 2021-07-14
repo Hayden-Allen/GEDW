@@ -30,7 +30,7 @@ namespace engine
 		}
 	private:
 		// everything in this group will use a single VAO and IBO
-		gfx::RenderObject* m_RenderObject;
+		gfx::RenderObject<GL_STATIC_DRAW, GL_STATIC_DRAW>* m_RenderObject;
 		// list of Sprites to send to our Renderer
 		std::vector<Sprite*> m_Sprites;
 	};

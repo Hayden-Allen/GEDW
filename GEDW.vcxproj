@@ -183,6 +183,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\world\Chunk.cpp" />
+    <ClCompile Include="src\world\dynamic\Dynamic.cpp" />
     <ClCompile Include="src\world\Map.cpp" />
     <ClCompile Include="src\world\SpriteGroup.cpp" />
   </ItemGroup>
@@ -214,6 +215,8 @@
     <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\world\Chunk.h" />
+    <ClInclude Include="src\world\dynamic\Dynamic.h" />
+    <ClInclude Include="src\world\dynamic\IndexedList.h" />
     <ClInclude Include="src\world\Light.h" />
     <ClInclude Include="src\world\Map.h" />
     <ClInclude Include="src\world\SpriteGroup.h" />

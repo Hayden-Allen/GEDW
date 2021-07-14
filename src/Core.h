@@ -2,7 +2,7 @@
 
 namespace engine
 {
-	constexpr static uint s_VerticesPerQuad = 4, s_IndicesPerQuad = 6, s_FloatsPerVertex = 5;
+	constexpr static uint s_VerticesPerQuad = 4, s_IndicesPerQuad = 6, s_FloatsPerVertex = 5, s_FloatsPerQuad = s_FloatsPerVertex * s_VerticesPerQuad, s_FloatsPerDynamicVertex = 5, s_FloatsPerDynamic = s_FloatsPerDynamicVertex * s_VerticesPerQuad;
 	constexpr static uint s_IndexOffsets[s_IndicesPerQuad] = { 0, 1, 2, 0, 2, 3 };
 	constexpr static float s_CornerPoints[] = { 0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f };
 

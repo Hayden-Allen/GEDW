@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Sprite.h"
 
 namespace engine
 {
@@ -32,7 +33,8 @@ namespace engine
 			{
 				statics.SetUniform3f(name, x, y, z);
 			}
-			void SetUniformBlock(const char* name, const gfx::UniformBuffer& buffer)
+			template<GLenum USAGE>
+			void SetUniformBlock(const char* name, const gfx::UniformBuffer<USAGE>& buffer)
 			{
 				statics.SetUniformBlock(name, buffer);
 			}
@@ -49,8 +51,46 @@ namespace engine
 
 
 		void Clear();
-		void Draw(const gfx::RenderObject& ob, const std::vector<Sprite*>& sprites);
-		void SetLights(uint count, const gfx::UniformBuffer& lights)
+		template<GLenum VA, GLenum IB>
+		void Draw(const gfx::RenderObject<VA, IB>& obj, const std::vector<Sprite*>& sprites)
+		{
+			// for all sprites we've been told to draw
+			for (uint i = 0; i < sprites.size(); i++)
+			{
+				Sprite* cur = sprites[i];
+				// if the current sprite exists
+				if (cur)
+				{
+					// update (change frame if needed)
+					cur->Update(m_LastTime);
+					// get current texture and frame values to send to GPU
+					m_TextureBuffer[i] = cur->GetTexture();
+					m_TextureFrames[i] = cur->GetCurrentFrame();
+				}
+				// sprite doesn't exist, set current index = nullptr in our buffer to avoid potential unintended effects
+				else
+					m_TextureBuffer[i] = nullptr;
+			}
+
+			// update our list of texture frames now that we've update all of our sprites
+			m_Shaders.SetUniform1iv("u_TextureFrames", CAST(uint, sprites.size()), m_TextureFrames);
+			// actually draw everything now that we have the textures we need to draw in m_TextureBuffer
+			m_Renderer.Draw(obj, m_TextureBuffer, CAST(uint, sprites.size()), m_Shaders.statics);
+		}
+		template<GLenum VA, GLenum IB>
+		void Draw(const gfx::RenderObject<VA, IB>& obj, Sprite* const sprite)
+		{
+			sprite->Update(m_LastTime);
+			m_TextureBuffer[0] = sprite->GetTexture();
+			m_TextureFrames[0] = sprite->GetCurrentFrame();
+
+			// update our list of texture frames now that we've update all of our sprites
+			m_Shaders.SetUniform1iv("u_TextureFrames", 1, m_TextureFrames);
+			// actually draw everything now that we have the textures we need to draw in m_TextureBuffer
+			m_Renderer.Draw(obj, m_TextureBuffer, 1, m_Shaders.statics);
+		}
+		template<GLenum USAGE>
+		void SetLights(uint count, const gfx::UniformBuffer<USAGE>& lights)
 		{
 			// we'll tell our shader the actual number of lights we're setting so it doesn't loop through a bunch of stuff that it doesn't need to
 			m_Shaders.SetUniform1i("u_LightCount", count);

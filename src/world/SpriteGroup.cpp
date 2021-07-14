@@ -62,7 +62,7 @@ namespace engine
 		}
 
 		// upload our data to the GPU then delete the local copy
-		m_RenderObject = new gfx::RenderObject(floatCount, vertices, { 2, 2, 1 }, s_IndicesPerQuad, s_VerticesPerQuad, s_IndexOffsets);
+		m_RenderObject = new gfx::RenderObject<GL_STATIC_DRAW, GL_STATIC_DRAW>(floatCount, vertices, { 2, 2, 1 }, s_IndicesPerQuad, s_VerticesPerQuad, s_IndexOffsets);
 		delete[] vertices;
 	}
 

@@ -75,7 +75,7 @@ namespace engine
 		m_LightCount = math::min(Light::s_MaxLightCount, constructor.lights.size());
 		// We're giving our buffer a pointer to our array of lights as a float pointer. This works because our Light struct only contains floats.
 		// The number of floats = (number of lights) * (number of bytes per light) / (number of bytes per float)
-		m_Lights = new gfx::UniformBuffer(m_LightCount * sizeof(Light) / sizeof(float), PUN(float*, ptr), 0);
+		m_Lights = new gfx::UniformBuffer<GL_STATIC_DRAW>(m_LightCount * sizeof(Light) / sizeof(float), PUN(float*, ptr), 0);
 	}
 
 

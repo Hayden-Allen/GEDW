@@ -2,28 +2,29 @@
 
 namespace gfx
 {
-	class UniformBuffer : public Buffer<GL_UNIFORM_BUFFER>
+	template<GLenum USAGE>
+	class UniformBuffer : public Buffer<float, GL_UNIFORM_BUFFER, USAGE>
 	{
 	public:
 		UniformBuffer(uint count, const float* data, uint slot) :
-			Buffer<GL_UNIFORM_BUFFER>(count),
+			Buffer<float, GL_UNIFORM_BUFFER, USAGE>(count),
 			m_Slot(slot)
 		{
-			Write(count * sizeof(float), data);
+			this->Write(count * sizeof(float), data);
 		}
 		UniformBuffer(const UniformBuffer& other) = delete;
 		UniformBuffer(UniformBuffer&& other) = delete;
 		~UniformBuffer()
 		{
-			printf("Delete UB %u\n", m_Id);
+			printf("Delete UB %u\n", this->m_Id);
 		}
 
 
 		void Bind() const override
 		{
-			Buffer<GL_UNIFORM_BUFFER>::Bind();
+			Buffer<float, GL_UNIFORM_BUFFER, USAGE>::Bind();
 			// give the GPU access to our whole buffer (elements 0 through m_Count)
-			glBindBufferRange(GL_UNIFORM_BUFFER, m_Slot, m_Id, 0, m_Count * sizeof(float));
+			glBindBufferRange(GL_UNIFORM_BUFFER, m_Slot, this->m_Id, 0, this->m_Count * sizeof(float));
 		}
 		uint GetSlot() const
 		{

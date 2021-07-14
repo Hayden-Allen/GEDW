@@ -14,20 +14,23 @@ namespace gfx
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
-		void Draw(const RenderObject& obj, const Shader& shader) const
+		template<GLenum VA, GLenum IB>
+		void Draw(const RenderObject<VA, IB>& obj, const Shader& shader) const
 		{
 			shader.Bind();
 			obj.Bind();
 			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 		}
-		void Draw(const RenderObject& obj, const Texture& texture, const Shader& shader) const
+		template<GLenum VA, GLenum IB>
+		void Draw(const RenderObject<VA, IB>& obj, const Texture& texture, const Shader& shader) const
 		{
 			obj.Bind();
 			texture.Bind();
 			shader.Bind();
 			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 		}
-		void Draw(const RenderObject& obj, const Texture*const*const textures, uint count, const Shader& shader) const
+		template<GLenum VA, GLenum IB>
+		void Draw(const RenderObject<VA, IB>& obj, const Texture*const*const textures, uint count, const Shader& shader) const
 		{
 			obj.Bind();
 			for (uint i = 0; i < count; i++)

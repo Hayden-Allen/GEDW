@@ -5,7 +5,7 @@ namespace gfx
 	// base class for vertex, index, and uniform buffers
 	// TARGET is GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER,
 	// or GL_UNIFORM_BUFFER accordingly
-	template<GLenum TARGET>
+	template<typename T, GLenum TARGET, GLenum USAGE>
 	class Buffer : public GLObject
 	{
 	public:
@@ -20,6 +20,11 @@ namespace gfx
 		uint GetCount() const
 		{
 			return m_Count;
+		}
+		void Update(uint count, const T* const data, uint offset)
+		{
+			Bind();
+			glBufferSubData(TARGET, offset * sizeof(T), count * sizeof(T), data);
 		}
 	protected:
 		// number of elements in this buffer
@@ -43,11 +48,10 @@ namespace gfx
 		// INITIAL WRITE ONLY; glBufferData allocates a new memory block, so
 		// glBufferSubData should be used for updating existing data (we'll
 		// write a different method for this eventually)
-		template<typename T>
 		void Write(uint size, const T* const data)
 		{
 			Bind();
-			glBufferData(TARGET, size, data, GL_STATIC_DRAW);
+			glBufferData(TARGET, size, data, USAGE);
 		}
 	};
 }
