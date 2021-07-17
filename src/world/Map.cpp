@@ -52,6 +52,9 @@ namespace engine
 		// offset position by the constructor's position
 		tile.pos += constructor.pos;
 
+		if (!CheckLayer(tile.layer))
+			return;
+
 		constructor.tiles.push_back(tile);
 	}
 	void Map::AddRect(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor)
@@ -62,6 +65,9 @@ namespace engine
 		uint frames, time, w, h, layer;
 		bool rigid;
 		in >> path >> frames >> time >> x >> y >> w >> h >> layer >> rigid;
+
+		if (!CheckLayer(layer))
+			return;
 
 		Sprite* const sprite = bank.Put(path, frames, time);
 		float width = 1.f * sprite->GetWidth(), height = 1.f * sprite->GetHeight();

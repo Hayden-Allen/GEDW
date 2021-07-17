@@ -141,4 +141,25 @@ namespace math
 				return false;
 		return true;
 	}
+	template<typename T>
+	static void arrprint(uint count, T* arr, const std::string& fmt, const std::string& sep, uint wrap = 10)
+	{
+		printf("[\n\t");
+		const uint bufferLength = CAST(uint, fmt.length() + sep.length() + 2);
+		char* buffer = new char[bufferLength];
+		for (uint i = 0; i < count; i++)
+		{
+			sprintf_s(buffer, bufferLength, "%s%s", fmt.c_str(), (i != count - 1 ? sep.c_str() : ""));
+			printf(buffer, arr[i]);
+			if (i != 0 && (i + 1) % wrap == 0)
+				printf("\n\t");
+		}
+		printf("\n]\n");
+		delete[] buffer;
+	}
+	template<typename T, uint N>
+	static void arrprint(T(&arr)[N], const std::string& fmt, const std::string& sep, uint wrap = 10)
+	{
+		arrprint(N, arr, fmt, sep, wrap);
+	}
 }

@@ -9,6 +9,9 @@ namespace engine
 	class SpriteGroup
 	{
 	public:
+		constexpr static uint s_LayerCount = 2;
+
+
 		SpriteGroup(const std::unordered_map<Sprite*, std::vector<Tile>>& data);
 		SpriteGroup(const SpriteGroup& group) = delete;
 		SpriteGroup(SpriteGroup&& group) noexcept :

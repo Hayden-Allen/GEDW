@@ -3,8 +3,8 @@
 
 namespace engine
 {
-	Renderer::Renderer(const char* fp, EngineInstance* engine) :
-		m_Shaders{ fp },
+	Renderer::Renderer(const char* statics, const char* dynamics, EngineInstance* engine) :
+		m_Shaders{ statics, dynamics },
 		m_Engine(engine),
 		m_TextureFrames(new int[gfx::getMaxTextureUnits()]),
 		m_TextureBuffer(new gfx::Texture*[gfx::getMaxTextureUnits()]),

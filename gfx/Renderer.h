@@ -12,36 +12,33 @@ namespace gfx
 
 		void Clear() const
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 		template<GLenum VA, GLenum IB>
-		void Draw(const RenderObject<VA, IB>& obj, const Shader& shader) const
+		void Draw(const VertexArray<VA>& va, const IndexBuffer<IB>& ib, const Texture* const* const textures, uint count, const Shader& shader) const
 		{
-			shader.Bind();
-			obj.Bind();
-			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+			DrawBase(textures, count, ib.GetCount(), shader, va, ib);
 		}
 		template<GLenum VA, GLenum IB>
-		void Draw(const RenderObject<VA, IB>& obj, const Texture& texture, const Shader& shader) const
+		void Draw(const RenderObject<VA, IB>& obj, const Texture* const* const textures, uint count, const Shader& shader) const
 		{
-			obj.Bind();
-			texture.Bind();
-			shader.Bind();
-			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-		}
-		template<GLenum VA, GLenum IB>
-		void Draw(const RenderObject<VA, IB>& obj, const Texture*const*const textures, uint count, const Shader& shader) const
-		{
-			obj.Bind();
-			for (uint i = 0; i < count; i++)
-				textures[i]->Bind(i);
-			shader.Bind();
-			glDrawElements(GL_TRIANGLES, obj.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+			DrawBase(textures, count, obj.GetIndexCount(), shader, obj);
 		}
 		void Render(const OpenGLInstance& gl) const
 		{
 			glfwSwapBuffers(gl.window);
 			glfwPollEvents();
+		}
+	private:
+		template<typename ... Args>
+		void DrawBase(const Texture* const* const textures, uint textureCount, uint indexCount, const Shader& shader, const Args& ... args) const
+		{
+			(args.Bind(), ...);
+			shader.Bind();
+			for (uint i = 0; i < textureCount; i++)
+				if(textures[i])
+					textures[i]->Bind(i);
+			glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 		}
 	};
 }

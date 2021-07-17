@@ -76,6 +76,15 @@ namespace engine
 		{
 			return math::equalsIgnoreCase(word, s_EndToken);
 		}
+		bool CheckLayer(uint layer)
+		{
+			if (layer >= SpriteGroup::s_LayerCount)
+			{
+				printf("Invalid layer index %u (must be %u), aborting...\n", layer, SpriteGroup::s_LayerCount);
+				m_Abort = true;
+			}
+			return !m_Abort;
+		}
 
 
 		// top level blocks

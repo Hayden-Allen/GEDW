@@ -1,11 +1,11 @@
 #type vertex
 #version 330 core
-#define DEPTH_MIN 0
-#define DEPTH_MAX .9999
+#define DEPTH_MIN .0001
+#define DEPTH_MAX .9998
 layout(location = 0) in vec2 i_Position;
 layout(location = 1) in vec2 i_TexCoord;
 layout(location = 2) in float i_TexIndex;
-layout(location = 3) in float i_Depth;
+layout(location = 3) in float i_CenterY;
 
 uniform vec2 u_Camera, u_Scale;
 
@@ -18,7 +18,7 @@ void main()
 	v_TexCoord = i_TexCoord;
 	v_TexIndex = i_TexIndex;
 	v_Position = i_Position;
-	v_Depth = clamp(i_Depth, DEPTH_MIN, DEPTH_MAX);
+	 v_Depth = clamp(((i_CenterY + u_Camera.y) * u_Scale.y + 1) / 2, DEPTH_MIN, DEPTH_MAX);
 }
 
 

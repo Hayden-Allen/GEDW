@@ -42,6 +42,15 @@
     <ClCompile Include="src\world\dynamic\Dynamic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\dynamic\DynamicList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\dynamic\DrawGroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\dynamic\DrawGroupList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deps\include\glew.h">
@@ -143,10 +152,20 @@
     <ClInclude Include="src\world\dynamic\IndexedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\dynamic\DynamicList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\dynamic\DrawGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\dynamic\DrawGroupList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
     <None Include="res\shader_texture.glsl" />
+    <None Include="res\shader_dynamic.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\map.txt" />

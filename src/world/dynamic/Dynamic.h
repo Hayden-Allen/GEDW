@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "DynamicList.h"
 
 namespace engine
 {
@@ -9,17 +10,15 @@ namespace engine
 	class Dynamic
 	{
 	public:
-		Dynamic(const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state);
+		friend class DynamicList;
+
+
+		Dynamic(DynamicList& list, const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state);
 		Dynamic(const Dynamic& other) = delete;
 		Dynamic(Dynamic&& other) = delete;
-		~Dynamic()
-		{
-			delete m_RenderObject;
-		}
 
 
-		void Update(float delta);
-		void Draw(Renderer& renderer);
+		void Update(float delta, DynamicList& list);
 		void SetState(const std::string& state);
 		const math::Vec2<float>& GetPos() const
 		{
@@ -46,12 +45,16 @@ namespace engine
 		{
 			return m_States[m_CurrentState];
 		}
+		const float* const GetVertices() const
+		{
+			return m_Vertices;
+		}
 	private:
 		math::Vec2<float> m_Pos, m_Vel;
-		float m_Speed, m_Vertices[s_FloatsPerQuad];
+		float m_Speed, m_Vertices[s_FloatsPerDynamic];
 		std::unordered_map<std::string, Sprite*> m_States;
 		std::string m_CurrentState;
-		gfx::RenderObject<GL_DYNAMIC_DRAW, GL_STATIC_DRAW>* m_RenderObject;
+		DynamicList::Handle m_Handle;
 
 
 		void UpdateVertices();

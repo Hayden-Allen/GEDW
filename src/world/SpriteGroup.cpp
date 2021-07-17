@@ -53,6 +53,8 @@ namespace engine
 					vertices[vertexOffset + 3] = s_CornerPoints[i * 2 + 1];
 					// i
 					vertices[vertexOffset + 4] = index;
+					// depth
+					vertices[vertexOffset + 5] = 1.f - 1.f * tile.layer / (s_LayerCount - 1);
 				}
 				// increment offset by the number of floats we just wrote
 				offset += s_FloatsPerVertex * s_VerticesPerQuad;
@@ -61,8 +63,9 @@ namespace engine
 			index++;
 		}
 
+
 		// upload our data to the GPU then delete the local copy
-		m_RenderObject = new gfx::RenderObject<GL_STATIC_DRAW, GL_STATIC_DRAW>(floatCount, vertices, { 2, 2, 1 }, s_IndicesPerQuad, s_VerticesPerQuad, s_IndexOffsets);
+		m_RenderObject = new gfx::RenderObject<GL_STATIC_DRAW, GL_STATIC_DRAW>(floatCount, vertices, { 2, 2, 1, 1 }, s_IndicesPerQuad, s_VerticesPerQuad, s_IndexOffsets);
 		delete[] vertices;
 	}
 

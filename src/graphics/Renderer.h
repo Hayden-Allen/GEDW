@@ -11,36 +11,42 @@ namespace engine
 	private:
 		struct Shaders
 		{
-			gfx::Shader statics;
+			gfx::Shader statics, dynamics;
 
 			void SetUniform1i(const char* name, int i)
 			{
 				statics.SetUniform1i(name, i);
+				dynamics.SetUniform1i(name, i);
 			}
 			void SetUniform1iv(const char* name, uint count, const int* const data)
 			{
 				statics.SetUniform1iv(name, count, data);
+				dynamics.SetUniform1iv(name, count, data);
 			}
 			void SetUniform1f(const char* name, float f)
 			{
 				statics.SetUniform1f(name, f);
+				dynamics.SetUniform1f(name, f);
 			}
 			void SetUniform2f(const char* name, float x, float y)
 			{
 				statics.SetUniform2f(name, x, y);
+				dynamics.SetUniform2f(name, x, y);
 			}
 			void SetUniform3f(const char* name, float x, float y, float z)
 			{
 				statics.SetUniform3f(name, x, y, z);
+				dynamics.SetUniform3f(name, x, y, z);
 			}
 			template<GLenum USAGE>
 			void SetUniformBlock(const char* name, const gfx::UniformBuffer<USAGE>& buffer)
 			{
 				statics.SetUniformBlock(name, buffer);
+				dynamics.SetUniformBlock(name, buffer);
 			}
 		};
 	public:
-		Renderer(const char* fp, EngineInstance* engine);
+		Renderer(const char* statics, const char* dynamics, EngineInstance* engine);
 		Renderer(const Renderer& other) = delete;
 		Renderer(Renderer&& other) = delete;
 		~Renderer()
@@ -52,42 +58,14 @@ namespace engine
 
 		void Clear();
 		template<GLenum VA, GLenum IB>
-		void Draw(const gfx::RenderObject<VA, IB>& obj, const std::vector<Sprite*>& sprites)
+		void DrawDynamics(const gfx::VertexArray<VA>& va, const gfx::IndexBuffer<IB>& ib, const std::vector<Sprite*>& sprites)
 		{
-			// for all sprites we've been told to draw
-			for (uint i = 0; i < sprites.size(); i++)
-			{
-				Sprite* cur = sprites[i];
-				// if the current sprite exists
-				if (cur)
-				{
-					// update (change frame if needed)
-					cur->Update(m_LastTime);
-					// get current texture and frame values to send to GPU
-					m_TextureBuffer[i] = cur->GetTexture();
-					m_TextureFrames[i] = cur->GetCurrentFrame();
-				}
-				// sprite doesn't exist, set current index = nullptr in our buffer to avoid potential unintended effects
-				else
-					m_TextureBuffer[i] = nullptr;
-			}
-
-			// update our list of texture frames now that we've update all of our sprites
-			m_Shaders.SetUniform1iv("u_TextureFrames", CAST(uint, sprites.size()), m_TextureFrames);
-			// actually draw everything now that we have the textures we need to draw in m_TextureBuffer
-			m_Renderer.Draw(obj, m_TextureBuffer, CAST(uint, sprites.size()), m_Shaders.statics);
+			DrawBase(sprites, va, ib, m_TextureBuffer, CAST(uint, sprites.size()), m_Shaders.dynamics);
 		}
 		template<GLenum VA, GLenum IB>
-		void Draw(const gfx::RenderObject<VA, IB>& obj, Sprite* const sprite)
+		void Draw(const gfx::RenderObject<VA, IB>& obj, const std::vector<Sprite*>& sprites)
 		{
-			sprite->Update(m_LastTime);
-			m_TextureBuffer[0] = sprite->GetTexture();
-			m_TextureFrames[0] = sprite->GetCurrentFrame();
-
-			// update our list of texture frames now that we've update all of our sprites
-			m_Shaders.SetUniform1iv("u_TextureFrames", 1, m_TextureFrames);
-			// actually draw everything now that we have the textures we need to draw in m_TextureBuffer
-			m_Renderer.Draw(obj, m_TextureBuffer, 1, m_Shaders.statics);
+			DrawBase(sprites, obj, m_TextureBuffer, CAST(uint, sprites.size()), m_Shaders.statics);
 		}
 		template<GLenum USAGE>
 		void SetLights(uint count, const gfx::UniformBuffer<USAGE>& lights)
@@ -126,5 +104,34 @@ namespace engine
 		gfx::Texture** m_TextureBuffer;
 		// time at the start of last frame (ms), time between start of last frame and start of current frame (ms), average fps of our program since it started running
 		float m_LastTime, m_FrameDelta, m_AvgFPS;
+
+
+
+		template<typename ... Args>
+		void DrawBase(const std::vector<Sprite*>& sprites, const Args& ... args)
+		{
+			// for all sprites we've been told to draw
+			for (uint i = 0; i < sprites.size(); i++)
+			{
+				Sprite* cur = sprites[i];
+				// if the current sprite exists
+				if (cur)
+				{
+					// update (change frame if needed)
+					cur->Update(m_LastTime);
+					// get current texture and frame values to send to GPU
+					m_TextureBuffer[i] = cur->GetTexture();
+					m_TextureFrames[i] = cur->GetCurrentFrame();
+				}
+				// sprite doesn't exist, set current index = nullptr in our buffer to avoid potential unintended effects
+				else
+					m_TextureBuffer[i] = nullptr;
+			}
+
+			// update our list of texture frames now that we've update all of our sprites
+			m_Shaders.SetUniform1iv("u_TextureFrames", CAST(uint, sprites.size()), m_TextureFrames);
+			// actually draw everything now that we have the textures we need to draw in m_TextureBuffer
+			m_Renderer.Draw(args...);
+		}
 	};
 }
