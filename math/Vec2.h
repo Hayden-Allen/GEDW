@@ -21,6 +21,10 @@ namespace math
 		}
 
 
+		bool operator==(const T& t) const
+		{
+			return isZero(x - t) && isZero(y - t);
+		}
 		// short circuit if x != other.x
 		bool operator==(const Vec2<T>& other) const
 		{
@@ -61,6 +65,10 @@ namespace math
 			x += other.x;
 			y += other.y;
 			return *this;
+		}
+		Vec2<T> operator-() const
+		{
+			return { -x, -y };
 		}
 		// return new vector with both of this vector's fields MINUS t
 		Vec2<T> operator-(const T& t) const
@@ -173,5 +181,36 @@ namespace math
 				return Normalize() *= hi;
 			return *this;
 		}
+		Vec2<T> Unit() const
+		{
+			return { CAST(T, sign(x)), CAST(T, sign(y)) };
+		}
+		Vec2<T> Abs() const
+		{
+			return { abs(x), abs(y) };
+		}
 	};
+
+
+
+	template<typename T>
+	Vec2<T> operator+(const T& t, const Vec2<T>& v)
+	{
+		return { t + v.x, t + v.y };
+	}
+	template<typename T>
+	Vec2<T> operator-(const T& t, const Vec2<T>& v)
+	{
+		return { t - v.x, t - v.y };
+	}
+	template<typename T>
+	Vec2<T> operator*(const T& t, const Vec2<T>& v)
+	{
+		return { t * v.x, t * v.y };
+	}
+	template<typename T>
+	Vec2<T> operator/(const T& t, const Vec2<T>& v)
+	{
+		return { t / v.x, t / v.y };
+	}
 }

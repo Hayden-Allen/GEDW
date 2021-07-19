@@ -33,6 +33,10 @@ namespace engine
 		else
 			printf("Invalid state '%s'\n", state.c_str());
 	}
+	math::Vec2<float> Dynamic::GetCurrentDims() const
+	{
+		return GetCurrentSprite()->GetDims();
+	}
 
 
 

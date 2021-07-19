@@ -32,6 +32,10 @@ namespace engine
 		{
 			return m_Height;
 		}
+		math::Vec2<float> GetDims() const
+		{
+			return { 1.f * m_Width, 1.f * m_Height };
+		}
 	private:
 		constexpr static uint s_BitmapInfoSize = 54, s_BitmapInfoWidth = 18, s_BitmapInfoHeight = 22, s_BytesPerPixel = 3, s_BitmapWidthStep = 4;
 		uint m_Width, m_Height, m_Frames, m_CurrentFrame, m_TimePerFrame;

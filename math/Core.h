@@ -162,4 +162,9 @@ namespace math
 	{
 		arrprint(N, arr, fmt, sep, wrap);
 	}
+	template<typename T>
+	static int sign(T t)
+	{
+		return (t == 0 ? 0 : (t > 0 ? 1 : -1));
+	}
 }

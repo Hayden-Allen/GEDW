@@ -18,7 +18,7 @@ void main()
 	v_TexCoord = i_TexCoord;
 	v_TexIndex = i_TexIndex;
 	v_Position = i_Position;
-	 v_Depth = clamp(((i_CenterY + u_Camera.y) * u_Scale.y + 1) / 2, DEPTH_MIN, DEPTH_MAX);
+	v_Depth = clamp(((i_CenterY + u_Camera.y) * u_Scale.y + 1) / 2, DEPTH_MIN, DEPTH_MAX);
 }
 
 
