@@ -167,4 +167,12 @@ namespace math
 	{
 		return (t == 0 ? 0 : (t > 0 ? 1 : -1));
 	}
+	template<typename A, typename B>
+	static A nextPower(A base, B value)
+	{
+		A cur = CAST(A, 1);
+		while (cur < CAST(A, value))
+			cur *= base;
+		return cur;
+	}
 }

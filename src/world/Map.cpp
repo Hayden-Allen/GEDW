@@ -75,13 +75,14 @@ namespace engine
 		// loop over whole area defined by (w, h)
 		for(uint i = 0; i < h; i++)
 			for(uint j = 0; j < w; j++)
-				constructor.tiles.emplace_back(
-					sprite,
-					// base coord of the rect + offset for current tile's position + constructor's position
-					math::Vec2<float>(x + j * width, y + i * height) + constructor.pos,
-					layer,
-					rigid
-				);
+				//constructor.tiles.emplace_back(
+				//	sprite,
+				//	// base coord of the rect + offset for current tile's position + constructor's position
+				//	math::Vec2<float>(x + j * width, y + i * height) + constructor.pos,
+				//	layer,
+				//	rigid
+				//);
+				constructor.tiles.emplace_back(sprite, math::Vec2<float>(x + j * width, y + i * height) + constructor.pos, layer, rigid);
 	}
 	void Map::AddPattern(std::ifstream& in, SpriteBank& bank, ChunkConstructor& constructor)
 	{

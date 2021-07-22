@@ -161,6 +161,12 @@
     <ClInclude Include="src\world\dynamic\DrawGroupList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="math\QuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math\LinkedListNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />

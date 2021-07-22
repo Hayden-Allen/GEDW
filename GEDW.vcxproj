@@ -208,6 +208,8 @@
     <ClInclude Include="gfx\VertexBuffer.h" />
     <ClInclude Include="math\All.h" />
     <ClInclude Include="math\Core.h" />
+    <ClInclude Include="math\LinkedListNode.h" />
+    <ClInclude Include="math\QuadTree.h" />
     <ClInclude Include="math\Range.h" />
     <ClInclude Include="math\Vec2.h" />
     <ClInclude Include="src\Core.h" />
