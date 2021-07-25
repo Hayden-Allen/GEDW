@@ -3,6 +3,7 @@
 #include "graphics/SpriteBank.h"
 #include "graphics/Sprite.h"
 #include "Light.h"
+#include "dynamic/Dynamic.h"
 
 namespace engine
 {
@@ -22,6 +23,38 @@ namespace engine
 		while (in >> word && Execute(s_GenFunctions, word, in, params) && !m_Abort);
 
 		in.close();
+	}
+
+
+
+	void Map::Draw(Renderer& renderer, const Dynamic* const player)
+	{
+		const math::Vec2<float>& pos = player->GetPos(), dim = player->GetCurrentDims();
+
+		// search for a Chunk that contains the player
+		bool found = false;
+		for (uint i = 0; i < m_Chunks.size(); i++)
+		{
+			const Chunk& cur = m_Chunks[i];
+			if (math::rectIntersect(cur.GetPos(), cur.GetDim(), pos, dim))
+			{
+				// multiple Chunks contain the player, which isn't allowed
+				if (found)
+				{
+					printf("Player cannot be within multiple Chunks\n");
+					return;
+				}
+				m_CurrentChunk = i;
+				found = true;
+			}
+		}
+
+		// no Chunks contain the player, which also isn't allowed
+		if (!found)
+			printf("Player must be in a Chunk\n");
+
+		// only process/draw the Chunk that the player is actually in this frame
+		m_Chunks[m_CurrentChunk].Draw(renderer);
 	}
 
 

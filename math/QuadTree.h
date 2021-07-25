@@ -103,11 +103,19 @@ namespace math
 	public:
 		QuadTreeElement(const math::Vec2<float>& pos, const math::Vec2<float>& dim, const math::Vec2<float>& vel);
 		QuadTreeElement(const Element& other) = delete;
-		QuadTreeElement(Element&& other) = delete;
+		QuadTreeElement(Element&& other) noexcept :
+			m_Pos(other.m_Pos),
+			m_Vel(other.m_Vel),
+			m_Dim(other.m_Dim),
+			m_Parents(std::move(other.m_Parents)),
+			m_Grandparents(std::move(other.m_Grandparents)),
+			m_Checked(std::move(other.m_Checked)),
+			m_GrandparentCount(std::move(other.m_GrandparentCount))
+		{}
 		virtual ~QuadTreeElement() {}
 
 
-		virtual void ResolveCollisions(const CollisionInfo& info) = 0;
+		virtual void ResolveCollision(const CollisionInfo& info) = 0;
 		void Move(const math::Vec2<float>& pos, const math::Vec2<float>& dim, const math::Vec2<float>& vel, Node* const root);
 		void Update(float delta);
 		const math::Vec2<float>& GetPos() const
@@ -130,6 +138,9 @@ namespace math
 		std::unordered_map<Node*, ElementNode*> m_Parents;
 		// set of parent Nodes of all the Nodes in m_Parents
 		std::set<Node*, NodeComparator> m_Grandparents;
+		// marked as mutable to signify they aren't part of the object's logical state
+		mutable std::unordered_set<Element*> m_Checked;
+		mutable std::unordered_map<Node*, uint> m_GrandparentCount;
 
 
 		virtual bool IsContainedBy(const Node* const node) const = 0;
@@ -139,11 +150,7 @@ namespace math
 		void Delete();
 		void RemoveFromParents();
 		void TryRemoveGrandparent(Node* const gp);
-		void ClearGrandparents()
-		{
-			m_Grandparents.clear();
-		}
-		void Merge(std::set<Node*>& grandparents)
+		void Merge(std::set<Node*, NodeComparator>& grandparents)
 		{
 			for (auto& gp : grandparents)
 				gp->Merge();
@@ -193,7 +200,7 @@ namespace math
 			if (!m_Parent)
 			{
 				const auto& pos = e->m_Pos, dim = e->m_Dim;
-				printf("QuadTree [(%f, %f), (%f, %f)] cannot contain element [(%f, %f), (%f, %f)]\n", m_Pos.x, m_Pos.y, m_Pos.x + m_Dim, m_Pos.y + m_Dim, pos.x, pos.y, pos.x + dim.x, pos.y + dim.y)
+				printf("QuadTree [(%f, %f), (%f, %f)] cannot contain element [(%f, %f), (%f, %f)]\n", m_Pos.x, m_Pos.y, m_Pos.x + m_Dim, m_Pos.y + m_Dim, pos.x, pos.y, pos.x + dim.x, pos.y + dim.y);
 			}
 			return;
 		}
@@ -237,7 +244,7 @@ namespace math
 		m_Children{ nullptr },
 		m_Parent(parent),
 		m_Pos(pos),
-		m_Dim(dim),
+		m_Dim(size),
 		m_Count(0)
 	{}
 	template<uint THRESHOLD>
@@ -290,7 +297,7 @@ namespace math
 		}
 
 		// create child Nodes
-		constexpr math::Vec2<float> offsets[s_Children] = { {0.f, 0.f}, {.5f, 0.f}, {.5f, .5f}, {0.f, .5f} };
+		const math::Vec2<float> offsets[s_Children] = { {0.f, 0.f}, {.5f, 0.f}, {.5f, .5f}, {0.f, .5f} };
 		for (uint i = 0; i < s_Children; i++)
 		{
 			Node* child = new Node(m_Pos + offsets[i] * CAST(float, m_Dim), m_Dim / 2, this);
@@ -298,7 +305,8 @@ namespace math
 			cur = m_Data;
 			while (cur)
 			{
-				cur->data->AddTo(child);
+				// cur->data->AddTo(child);
+				child->Add(cur->data);
 				cur = cur->next;
 			}
 			m_Children[i] = child;
@@ -343,7 +351,7 @@ namespace math
 			for (Element* cur : elements)
 			{
 				cur->m_Grandparents.erase(this);
-				auto& parents = element->m_Parents;
+				auto& parents = cur->m_Parents;
 				for (uint i = 0; i < s_Children; i++)
 					parents.erase(m_Children[i]);
 			}
@@ -377,7 +385,9 @@ namespace math
 		m_Pos(pos),
 		m_Dim(dim),
 		m_Vel(vel)
-	{}
+	{
+		m_Checked.reserve(s_MapReserveSize);
+	}
 	template<uint THRESHOLD>
 	void QuadTreeElement<THRESHOLD>::Move(const math::Vec2<float>& pos, const math::Vec2<float>& dim, const math::Vec2<float>& vel, Node* const root)
 	{
@@ -404,5 +414,108 @@ namespace math
 		// we haven't moved or changed size, so our position in the tree doesn't need to change
 		else
 			CopyHostValues(pos, dim, vel);
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::Update(float delta)
+	{
+		// we aren't moving, so we can't cause any collisions
+		if (m_Vel == 0.f)
+			return;
+
+		// to store info about collisions
+		math::Vec2<float> normal = { 0.f, 0.f }, contact = { 0.f, 0.f };
+		float time;
+
+		// no other Elements have been checked this frame
+		m_Checked.clear();
+		// this needs to be a multimap because it's not uncommon for multiple collisions to have the same "time" and regardless of that they all need to get resolved
+		std::multimap<float, CollisionInfo> collisions;
+		// for each parent Node
+		for (const auto& parent : m_Parents)
+		{
+			// go through all Elements contained by the current parent
+			ElementNode* node = parent.first->GetFirstElement();
+			while (node)
+			{
+				Element* cur = node->data;
+
+				// if not checking against ourselves and we haven't checked this Element yet this frame
+				const auto& it = m_Checked.find(cur);
+				if (cur != this && it != m_Checked.end())
+				{
+					// mark it as a collision if there's an intersection
+					if(Intersects(cur, delta, &normal, &contact, &time))
+						collisions.emplace(time, CollisionInfo(cur, normal, contact, time));
+					// regardless, mark it as checked
+					m_Checked.insert(cur);
+				}
+				node = node->next;
+			}
+		}
+
+		// for all marked collisions
+		for (auto& collision : collisions)
+		{
+			CollisionInfo& c = collision.second;
+			// make sure this collision still exists before resolving it
+			if (Intersects(c.element, delta, &c.normal, &c.contact, &c.time))
+				ResolveCollision(c);
+		}
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::AddTo(Node* const node, ElementNode* const container)
+	{
+		m_Parents.emplace(node, container);
+
+		Node* const parent = node->m_Parent;
+		if (parent)
+		{
+			m_Grandparents.insert(parent);
+
+			// if one of our parent nodes already has this parent, increment the count
+			const auto& it = m_GrandparentCount.find(parent);
+			if (it != m_GrandparentCount.end())
+				it->second++;
+			// otherwise, create the count and initialize it to 1
+			else
+				m_GrandparentCount[parent] = 1;
+		}
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::RemoveFrom(Node* const node)
+	{
+		m_Parents.erase(node);
+
+		Node* const parent = node->m_Parent;
+		if (parent)
+			TryRemoveGrandparent(parent);
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::Delete()
+	{
+		RemoveFromParents();
+		Merge(m_Grandparents);
+		m_Grandparents.clear();
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::RemoveFromParents()
+	{
+		// actually remove this Element from the tree
+		for (const auto& parent : m_Parents)
+			parent.first->DeleteElement(parent.second);
+		m_Parents.clear();
+	}
+	template<uint THRESHOLD>
+	void QuadTreeElement<THRESHOLD>::TryRemoveGrandparent(Node* const gp)
+	{
+		auto& ref = m_GrandparentCount[gp];
+		ref--;
+
+		// only remove this grandparent if it is now the parent of 0 of our parents
+		if (ref == 0)
+		{
+			m_GrandparentCount.erase(gp);
+			m_Grandparents.erase(gp);
+		}
 	}
 }

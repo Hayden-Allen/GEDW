@@ -5,10 +5,15 @@
 namespace engine
 {
 	Chunk::Chunk(const ChunkConstructor& constructor) :
+		m_QuadTree(nullptr),
 		m_Pos(constructor.pos),
+		m_Dim(0.f, 0.f),
 		m_Lights(nullptr),
 		m_LightCount(0)
 	{
+		constexpr float fmax = std::numeric_limits<float>::max(), fmin = std::numeric_limits<float>::lowest();
+		math::Vec2<float> min = { fmax, fmax }, max = { fmin, fmin };
+
 		// we need to take the given list of Tiles and separate them out by Sprite
 		std::vector<std::unordered_map<Sprite*, std::vector<Tile>>> groups;
 		// cache indices into `groups` for fast lookup times
@@ -17,6 +22,15 @@ namespace engine
 		// for each given Tile
 		for (auto& tile : constructor.tiles)
 		{
+			min.x = math::min(min.x, tile.pos.x);
+			min.y = math::min(min.y, tile.pos.y);
+			const math::Vec2<float>& tileDims = tile.sprite->GetDims();
+			max.x = math::max(max.x, tile.pos.x + tileDims.x);
+			max.y = math::max(max.y, tile.pos.y + tileDims.y);
+
+			if (tile.rigid)
+				m_Hitboxes.emplace_back(tile.pos, tile.sprite->GetDims(), math::Vec2<float>(0.f, 0.f), nullptr);
+
 			// get the index of the group that contains our current Tile's sprite
 			Sprite* sprite = tile.sprite;
 			uint index = 0;
@@ -76,6 +90,13 @@ namespace engine
 		// We're giving our buffer a pointer to our array of lights as a float pointer. This works because our Light struct only contains floats.
 		// The number of floats = (number of lights) * (number of bytes per light) / (number of bytes per float)
 		m_Lights = new gfx::UniformBuffer<GL_STATIC_DRAW>(m_LightCount * sizeof(Light) / sizeof(float), PUN(float*, ptr), 0);
+
+
+		m_QuadTree = new QTNode(min, max);
+		for (Hitbox& hb : m_Hitboxes)
+			m_QuadTree->Add(&hb);
+		m_Dim = max - min;
+		m_Pos = min;
 	}
 
 

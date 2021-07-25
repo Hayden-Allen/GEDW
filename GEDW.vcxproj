@@ -211,6 +211,7 @@
     <ClInclude Include="math\LinkedListNode.h" />
     <ClInclude Include="math\QuadTree.h" />
     <ClInclude Include="math\Range.h" />
+    <ClInclude Include="math\Ray.h" />
     <ClInclude Include="math\Vec2.h" />
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\graphics\Renderer.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="src\world\dynamic\Dynamic.h" />
     <ClInclude Include="src\world\dynamic\DynamicList.h" />
     <ClInclude Include="src\world\dynamic\IndexedList.h" />
+    <ClInclude Include="src\world\Hitbox.h" />
     <ClInclude Include="src\world\Light.h" />
     <ClInclude Include="src\world\Map.h" />
     <ClInclude Include="src\world\SpriteGroup.h" />

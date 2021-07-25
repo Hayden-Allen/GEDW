@@ -6,7 +6,7 @@ namespace math
 	{
 		bool left = false, right = false;
 	};
-	struct RangeOverlapParams
+	struct RangeOverlapsParams
 	{
 		RangeContainsParams left = {}, right = {};
 	};
@@ -49,7 +49,7 @@ namespace math
 		}
 		// params.left controls how other.m_Min is evaluated for containment
 		// params.right controls how other.m_Max is evaluated for containment
-		bool Overlaps(const Range<T>& other, const RangeOverlapParams& params = {}) const
+		bool Overlaps(const Range<T>& other, const RangeOverlapsParams& params = {}) const
 		{
 			return Contains(other.m_Min, params.left) || Contains(other.m_Max, params.right);
 		}

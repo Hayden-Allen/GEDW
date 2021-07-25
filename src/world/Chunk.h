@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "world/SpriteGroup.h"
 #include "Light.h"
+#include "Hitbox.h"
 
 namespace engine
 {
@@ -38,11 +39,15 @@ namespace engine
 		Chunk(const ChunkConstructor& constructor);
 		Chunk(const Chunk& other) = delete;
 		Chunk(Chunk&& other) noexcept :
+			m_QuadTree(other.m_QuadTree),
+			m_Hitboxes(std::move(other.m_Hitboxes)),
 			m_Pos(other.m_Pos),
+			m_Dim(other.m_Dim),
 			m_SpriteGroups(std::move(other.m_SpriteGroups)),
 			m_Lights(other.m_Lights),
 			m_LightCount(other.m_LightCount)
 		{
+			other.m_QuadTree = nullptr;
 			other.m_Lights = nullptr;
 		}
 		~Chunk()
@@ -52,8 +57,22 @@ namespace engine
 
 
 		void Draw(Renderer& renderer) const;
+		QTNode* const GetQuadTree()
+		{
+			return m_QuadTree;
+		}
+		const math::Vec2<float>& GetPos() const
+		{
+			return m_Pos;
+		}
+		const math::Vec2<float>& GetDim() const
+		{
+			return m_Dim;
+		}
 	private:
-		math::Vec2<float> m_Pos;
+		QTNode* m_QuadTree;
+		std::vector<Hitbox> m_Hitboxes;
+		math::Vec2<float> m_Pos, m_Dim;
 		std::vector<SpriteGroup> m_SpriteGroups;
 		gfx::UniformBuffer<GL_STATIC_DRAW>* m_Lights;
 		uint m_LightCount;

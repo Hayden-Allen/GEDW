@@ -5,6 +5,7 @@
 namespace engine
 {
 	class SpriteBank;
+	class Dynamic;
 
 	class Map
 	{
@@ -14,10 +15,10 @@ namespace engine
 		Map(Map&& other) = delete;
 
 
-		void Draw(Renderer& renderer) const
+		void Draw(Renderer& renderer, const Dynamic* const player);
+		QTNode* const GetCurrentQuadTree()
 		{
-			for (auto& chunk : m_Chunks)
-				chunk.Draw(renderer);
+			return m_Chunks[m_CurrentChunk].GetQuadTree();
 		}
 	private:
 		struct TopLevelParams
@@ -30,6 +31,7 @@ namespace engine
 		constexpr static char s_EndToken[] = "end";
 		std::unordered_map<std::string, ChunkConstructor> m_Patterns;
 		std::vector<Chunk> m_Chunks;
+		uint m_CurrentChunk;
 		bool m_Abort;
 
 

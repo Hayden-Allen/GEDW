@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "DynamicList.h"
+#include "world/Hitbox.h"
 
 namespace engine
 {
@@ -13,11 +14,13 @@ namespace engine
 		friend class DynamicList;
 
 
-		Dynamic(DynamicList& list, const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state);
+		Dynamic(QTNode* const root, DynamicList& list, const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state);
 		Dynamic(const Dynamic& other) = delete;
 		Dynamic(Dynamic&& other) = delete;
 
 
+		void MoveHitbox(QTNode* const root);
+		void ResolveCollisions(float delta);
 		void Update(float delta, DynamicList& list);
 		void SetState(const std::string& state);
 		math::Vec2<float> GetCurrentDims() const;
@@ -51,6 +54,7 @@ namespace engine
 			return m_Vertices;
 		}
 	private:
+		Hitbox* m_Hitbox;
 		math::Vec2<float> m_Pos, m_Vel;
 		float m_Speed, m_Vertices[s_FloatsPerDynamic];
 		std::unordered_map<std::string, Sprite*> m_States;
