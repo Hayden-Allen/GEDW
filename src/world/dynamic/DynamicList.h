@@ -29,6 +29,7 @@ namespace engine
 		void Remove(Dynamic* const d) override;
 		void Draw(Renderer& renderer);
 		void Update(uint i);
+		void Update(QTNode* const root, float delta);
 	private:
 		gfx::VertexArray<GL_DYNAMIC_DRAW>* m_VertexArray;
 		DrawGroupList m_DrawGroups;

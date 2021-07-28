@@ -55,6 +55,20 @@ namespace engine
 		{
 			return m_Next == m_Count && m_Openings.empty();
 		}
+		template<typename T>
+		void ForEach(T fn) const
+		{
+			for (uint i = 0; i < GetLast(); i++)
+				if (IsValid(i))
+					fn(m_List[i]);
+		}
+		template<typename T>
+		void ForEach(T fn)
+		{
+			for (uint i = 0; i < GetLast(); i++)
+				if (IsValid(i))
+					fn(m_List[i]);
+		}
 	protected:
 		uint m_Count, m_Next;
 		std::vector<uint> m_Openings;

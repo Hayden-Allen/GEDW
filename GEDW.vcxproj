@@ -189,6 +189,7 @@
     <ClCompile Include="src\world\dynamic\DynamicList.cpp" />
     <ClCompile Include="src\world\Map.cpp" />
     <ClCompile Include="src\world\SpriteGroup.cpp" />
+    <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deps\include\glew.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="src\io\File.h" />
     <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\world\Camera.h" />
     <ClInclude Include="src\world\Chunk.h" />
     <ClInclude Include="src\world\dynamic\DrawGroup.h" />
     <ClInclude Include="src\world\dynamic\DrawGroupList.h" />
@@ -231,6 +233,7 @@
     <ClInclude Include="src\world\Map.h" />
     <ClInclude Include="src\world\SpriteGroup.h" />
     <ClInclude Include="src\world\Tile.h" />
+    <ClInclude Include="src\world\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />

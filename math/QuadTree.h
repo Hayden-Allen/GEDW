@@ -441,10 +441,10 @@ namespace math
 
 				// if not checking against ourselves and we haven't checked this Element yet this frame
 				const auto& it = m_Checked.find(cur);
-				if (cur != this && it != m_Checked.end())
+				if (cur != this && it == m_Checked.end())
 				{
 					// mark it as a collision if there's an intersection
-					if(Intersects(cur, delta, &normal, &contact, &time))
+					if (Intersects(cur, delta, &normal, &contact, &time))
 						collisions.emplace(time, CollisionInfo(cur, normal, contact, time));
 					// regardless, mark it as checked
 					m_Checked.insert(cur);

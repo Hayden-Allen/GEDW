@@ -48,6 +48,18 @@ namespace engine
 		uint indices[count] = { 0 };
 		m_Buffer->Update(count, indices, i * count);
 	}
+	void DrawGroup::Move(DynamicList& list, float delta) const
+	{
+		ForEach([&list, delta](uint i) { list.m_List[i]->Update(delta, list); });
+	}
+	void DrawGroup::MoveHitboxes(DynamicList& list, QTNode* const root) const
+	{
+		ForEach([&list, root](uint i) { list.m_List[i]->MoveHitbox(root); });
+	}
+	void DrawGroup::ResolveCollisions(DynamicList& list, float delta) const
+	{
+		ForEach([&list, delta](uint i) { list.m_List[i]->ResolveCollisions(delta); });
+	}
 	void DrawGroup::Draw(DynamicList& list, Renderer& renderer) const
 	{
 		// for each element in our list
@@ -57,11 +69,7 @@ namespace engine
 		{
 			Sprite* ptr = nullptr;
 			if (IsValid(i))
-			{
-				Dynamic* d = list.m_List[m_List[i]];
-				d->Update(renderer.GetFrameDelta(), list);
-				ptr = d->GetCurrentSprite();
-			}
+				ptr = list.m_List[m_List[i]]->GetCurrentSprite();
 			m_SpriteBuffer[i] = ptr;
 		}
 		renderer.DrawDynamics(*list.m_VertexArray, *m_Buffer, m_SpriteBuffer);

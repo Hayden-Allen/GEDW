@@ -64,12 +64,16 @@ namespace engine
 		if (group->IsEmpty())
 			m_DrawGroups.Remove(group->m_Index);
 	}
+	void DynamicList::Update(QTNode* const root, float delta)
+	{
+		m_DrawGroups.ForEach([this, root](DrawGroup* g) { g->MoveHitboxes(*this, root); });
+		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->ResolveCollisions(*this, delta); });
+		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->Move(*this, delta); });
+	}
 	void DynamicList::Draw(Renderer& renderer)
 	{
 		// loop through all of our Groups and draw each one
-		for (uint i = 0; i < m_DrawGroups.GetLast(); i++)
-			if (m_DrawGroups[i])
-				m_DrawGroups[i]->Draw(*this, renderer);
+		m_DrawGroups.ForEach([this, &renderer](DrawGroup* g) { g->Draw(*this, renderer); });
 	}
 	void DynamicList::Update(uint i)
 	{

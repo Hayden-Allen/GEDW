@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Sprite.h"
+#include "world/Camera.h"
 
 namespace engine
 {
@@ -74,9 +75,10 @@ namespace engine
 			m_Shaders.SetUniform1i("u_LightCount", count);
 			m_Shaders.SetUniformBlock("u_Lights", lights);
 		}
-		void SetCamera(const math::Vec2<float>& camera)
+		void SetCamera(const Camera& camera)
 		{
-			m_Shaders.SetUniform2f("u_Camera", camera.x, camera.y);
+			const auto& off = camera.GetOffset();
+			m_Shaders.SetUniform2f("u_Camera", off.x, off.y);
 		}
 		float GetFrameDelta() const
 		{

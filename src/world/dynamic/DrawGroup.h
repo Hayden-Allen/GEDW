@@ -25,6 +25,9 @@ namespace engine
 
 		uint Add(uint dynamic) override;
 		void Remove(uint i) override;
+		void Move(DynamicList& list, float delta) const;
+		void MoveHitboxes(DynamicList& list, QTNode* const root) const;
+		void ResolveCollisions(DynamicList& list, float delta) const;
 		void Draw(DynamicList& list, Renderer& renderer) const;
 	private:
 		DrawGroupList::Handle m_Index;
