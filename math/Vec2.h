@@ -8,6 +8,9 @@ namespace math
 		T x, y;
 
 
+		Vec2() : x(CAST(T, 0)), y(CAST(T, 0)) {}
+		template<typename U>
+		Vec2(const U& u) : x(CAST(T, u)), y(CAST(T, u)) {}
 		Vec2(const T& _x, const T& _y) : x(_x), y(_y) {}
 		// copy constructor
 		Vec2(const Vec2<T>& other)
