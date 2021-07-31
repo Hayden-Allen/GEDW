@@ -175,4 +175,14 @@ namespace math
 			cur *= base;
 		return cur;
 	}
+	template<typename A, typename B>
+	static A pow(A base, B exp)
+	{
+		return CAST(A, std::pow(base, exp));
+	}
+	template<typename A, typename B>
+	static A rand(A min, B max)
+	{
+		return CAST(A, CAST(double, std::rand()) / CAST(double, RAND_MAX) * (max - min) + min);
+	}
 }

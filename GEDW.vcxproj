@@ -182,6 +182,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\script\Script.cpp" />
+    <ClCompile Include="src\script\ScriptParser.cpp" />
     <ClCompile Include="src\world\Chunk.cpp" />
     <ClCompile Include="src\world\dynamic\DrawGroup.cpp" />
     <ClCompile Include="src\world\dynamic\DrawGroupList.cpp" />
@@ -221,6 +223,10 @@
     <ClInclude Include="src\io\File.h" />
     <ClInclude Include="src\io\InputFile.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\script\Command.h" />
+    <ClInclude Include="src\script\Registers.h" />
+    <ClInclude Include="src\script\Script.h" />
+    <ClInclude Include="src\script\ScriptParser.h" />
     <ClInclude Include="src\world\Camera.h" />
     <ClInclude Include="src\world\Chunk.h" />
     <ClInclude Include="src\world\dynamic\DrawGroup.h" />
@@ -236,6 +242,7 @@
     <ClInclude Include="src\world\World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\scripts\test.script" />
     <None Include="res\shader.glsl" />
     <None Include="res\shader_dynamic.glsl" />
     <None Include="res\shader_texture.glsl" />

@@ -231,6 +231,50 @@ namespace engine
 	}
 	std::pair<int64_t, bool> ScriptParser::ResolveInt(const std::string& arg)
 	{
+		// string literal
+		if (arg[0] == s_StringToken)
+		{
+			// make sure the last character is also a "
+			if (arg.back() != s_StringToken)
+			{
+				Err(m_Line, "String literals must be enclosed in '\"'");
+				return { 0, false };
+			}
+			// write string into RAM
+			const uint length = CAST(uint, arg.size() - 1);
+			m_LastStringWrite = m_LastStringWrite - length;
+			for (uint i = 0; i < length; i++)
+				m_Script->m_Memory[m_LastStringWrite + i] = (i == length - 1 ? 0 : arg[i + 1]);
+			// return pointer to the string
+			return { CAST(int64_t, m_LastStringWrite), false };
+		}
 
+		// get special register index from map
+		const auto& it = Script::s_SpecialRegisters.find(arg);
+		if (it != Script::s_SpecialRegisters.end())
+			return { it->second, false };
+
+		// $<c><n>
+		if (arg[0] == s_RegToken)
+		{
+			// group base index + number
+			char group = arg[1], n = arg[2] - '0';
+			return { Script::s_RegisterOffsets.at(group) + n, false };
+		}
+
+		// floats are still returned as "ints" but with the flag set
+		if (arg.find('.') != std::string::npos)
+		{
+			Script::fp d = std::stod(arg);
+			return { PUN(int64_t, d), true };
+		}
+
+		// support bin, dec, and hex
+		int base = 10;
+		if (arg.find("0x") == 0)
+			base = 16;
+		if (arg.find("0b") == 0)
+			base = 2;
+		return { std::stoll((base != 10 ? arg.substr(2) : arg), nullptr, base), false };
 	}
 }

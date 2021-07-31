@@ -54,6 +54,12 @@
     <ClCompile Include="src\world\World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\script\ScriptParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\script\Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deps\include\glew.h">
@@ -182,11 +188,24 @@
     <ClInclude Include="src\world\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\script\Registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\Command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\ScriptParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
     <None Include="res\shader_texture.glsl" />
     <None Include="res\shader_dynamic.glsl" />
+    <None Include="res\scripts\test.script" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\map.txt" />

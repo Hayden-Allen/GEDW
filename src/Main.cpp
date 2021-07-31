@@ -4,6 +4,7 @@
 #include "world/dynamic/Dynamic.h"
 #include "world/Camera.h"
 #include "world/World.h"
+#include "script/Script.h"
 
 using namespace engine;
 
@@ -13,6 +14,13 @@ int main()
 	Renderer renderer("res/shader_texture.glsl", "res/shader_dynamic.glsl", &engine);
 
 	World world(engine, "res/map.txt");
+
+
+	Script test("res/scripts/test.script");
+	std::vector<Scriptable*> env;
+	test.Run({ &renderer, &world }, nullptr, env);
+	return 0;
+
 
 	Sprite* dsprite = world.PutSprite("res/test2.bmp", 2, 500);
 	Dynamic* dynamic = world.CreateDynamic({ 0.f, 0.f }, { 0.f, 0.f }, 100.f, { {"a", dsprite} }, "a");
