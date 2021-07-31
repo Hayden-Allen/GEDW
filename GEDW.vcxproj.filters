@@ -60,6 +60,12 @@
     <ClCompile Include="src\script\Script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\script\Scriptable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\dynamic\DynamicBank.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deps\include\glew.h">
@@ -200,12 +206,23 @@
     <ClInclude Include="src\script\ScriptParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\script\Scriptable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\dynamic\DynamicBank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\dynamic\Character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader.glsl" />
     <None Include="res\shader_texture.glsl" />
     <None Include="res\shader_dynamic.glsl" />
     <None Include="res\scripts\test.script" />
+    <None Include="res\scripts\player.script" />
+    <None Include="res\scripts\camera.script" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\map.txt" />

@@ -6,6 +6,7 @@ namespace engine
 {
 	class Dynamic;
 	class Renderer;
+	struct ScriptRuntime;
 
 	struct DynamicListHandle
 	{
@@ -29,7 +30,7 @@ namespace engine
 		void Remove(Dynamic* const d) override;
 		void Draw(Renderer& renderer);
 		void Update(uint i);
-		void Update(QTNode* const root, float delta);
+		void Update(QTNode* const root, ScriptRuntime& rt);
 	private:
 		gfx::VertexArray<GL_DYNAMIC_DRAW>* m_VertexArray;
 		DrawGroupList m_DrawGroups;

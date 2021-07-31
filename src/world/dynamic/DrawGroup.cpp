@@ -4,6 +4,7 @@
 #include "graphics/Renderer.h"
 #include "DynamicList.h"
 #include "Dynamic.h"
+#include "script/Script.h"
 
 namespace engine
 {
@@ -47,6 +48,10 @@ namespace engine
 		constexpr uint count = s_IndicesPerQuad;
 		uint indices[count] = { 0 };
 		m_Buffer->Update(count, indices, i * count);
+	}
+	void DrawGroup::RunScripts(DynamicList& list, ScriptRuntime& rt) const
+	{
+		ForEach([&list, &rt](uint i) {list.m_List[i]->RunScripts(rt); });
 	}
 	void DrawGroup::Move(DynamicList& list, float delta) const
 	{

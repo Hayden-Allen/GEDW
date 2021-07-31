@@ -5,30 +5,38 @@
 
 namespace engine
 {
-	Dynamic::Dynamic(QTNode* const root, DynamicList& list, const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state) :
-		m_Pos(pos),
-		m_Vel(vel),
-		m_Speed(speed),
-		m_Vertices{ 0 },
-		m_States(states),
-		m_CurrentState(state),
-		m_Handle(list.Add(this)),
-		m_Hitbox(nullptr)
+	Dynamic::Dynamic(QTNode* const root, DynamicList& dl, const DynamicTemplate& temp, bool add) :
+		Scriptable({ 0.f, 0.f }, { 0.f, 0.f }, { 0.f, 0.f }, temp.speed, temp.scripts, temp.states, temp.state),
+		m_Vertices{ 0.f },
+		m_Handle((add ? dl.Add(this) : DynamicList::Handle(0, 0, 0))),
+		m_Hitbox(nullptr),
+		m_Added(add)
 	{
-		SetState(state);
-		UpdateVertices();
-
-		const auto& dim = GetCurrentDims();
-		m_Hitbox = new Hitbox(m_Pos - dim / 2.f, dim, m_Vel, root);
+		Init(root);
+	}
+	Dynamic::Dynamic(const std::unordered_map<std::string, Script*>& scripts, QTNode* const root, DynamicList& list, const math::Vec2<float>& pos, const math::Vec2<float>& vel, float speed, const std::unordered_map<std::string, Sprite*>& states, const std::string& state) :
+		Scriptable(pos, vel, { 0.f, 0.f }, speed, scripts, states, state),
+		m_Vertices{ 0.f },
+		m_Handle(list.Add(this)),
+		m_Hitbox(nullptr),
+		m_Added(true)
+	{
+		Init(root);
 	}
 
 
 
+	const std::unordered_map<std::string, int64_t>& Dynamic::RunScripts(ScriptRuntime& rt)
+	{
+		std::vector<Scriptable*> env;
+		const auto& ret = Run(rt, env);
+		m_Dim = GetCurrentSprite()->GetDims();
+		return ret;
+	}
 	void Dynamic::MoveHitbox(QTNode* const root)
 	{
 		// update hitbox with current values
-		const auto& dim = GetCurrentDims();
-		m_Hitbox->Move(m_Pos - dim / 2.f, dim, m_Vel, root);
+		m_Hitbox->Move(m_Pos - m_Dim / 2.f, m_Dim, m_Vel, root);
 	}
 	void Dynamic::ResolveCollisions(float delta)
 	{
@@ -43,18 +51,6 @@ namespace engine
 		m_Pos += m_Vel * delta;
 		UpdateVertices();
 		list.Update(m_Handle.list);
-	}
-	void Dynamic::SetState(const std::string& state)
-	{
-		const auto& it = m_States.find(state);
-		if (it != m_States.end())
-			m_CurrentState = state;
-		else
-			printf("Invalid state '%s'\n", state.c_str());
-	}
-	math::Vec2<float> Dynamic::GetCurrentDims() const
-	{
-		return GetCurrentSprite()->GetDims();
 	}
 
 
@@ -79,5 +75,14 @@ namespace engine
 			// center y
 			m_Vertices[off + 5] = m_Pos.y;
 		}
+	}
+	void Dynamic::Init(QTNode* const root)
+	{
+		SetState(m_CurrentState);
+		m_Dim = GetCurrentSprite()->GetDims();
+		UpdateVertices();
+
+		if(m_Added)
+			m_Hitbox = new Hitbox(m_Pos - m_Dim / 2.f, m_Dim, m_Vel, root);
 	}
 }

@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <string>
+#include <thread>
 
 // rename these for convenience
 typedef uint8_t uchar;
@@ -184,5 +185,17 @@ namespace math
 	static A rand(A min, B max)
 	{
 		return CAST(A, CAST(double, std::rand()) / CAST(double, RAND_MAX) * (max - min) + min);
+	}
+	static void sleep(uint ms)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+	}
+	template<typename AK, typename AV, typename BK, typename BV>
+	static std::unordered_map<AK, AV> castMap(const std::unordered_map<BK, BV>& map)
+	{
+		std::unordered_map<AK, AV> ret;
+		for (const auto& entry : map)
+			ret.emplace(CAST(AK, entry.first), CAST(AV, entry.second));
+		return ret;
 	}
 }

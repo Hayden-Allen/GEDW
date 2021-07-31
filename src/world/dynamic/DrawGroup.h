@@ -7,6 +7,7 @@ namespace engine
 	class Sprite;
 	class Renderer;
 	class DynamicList;
+	struct ScriptRuntime;
 
 	class DrawGroup : public IndexedList<uint, uint, uint, uint>
 	{
@@ -25,6 +26,7 @@ namespace engine
 
 		uint Add(uint dynamic) override;
 		void Remove(uint i) override;
+		void RunScripts(DynamicList& list, ScriptRuntime& rt) const;
 		void Move(DynamicList& list, float delta) const;
 		void MoveHitboxes(DynamicList& list, QTNode* const root) const;
 		void ResolveCollisions(DynamicList& list, float delta) const;

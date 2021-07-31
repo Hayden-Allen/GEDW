@@ -77,7 +77,7 @@ namespace engine
 		}
 		void SetCamera(const Camera& camera)
 		{
-			const auto& off = camera.GetOffset();
+			const auto& off = camera.GetPos();
 			m_Shaders.SetUniform2f("u_Camera", off.x, off.y);
 		}
 		float GetFrameDelta() const

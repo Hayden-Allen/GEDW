@@ -29,7 +29,7 @@ namespace engine
 
 	void Map::Draw(Renderer& renderer, const Dynamic* const player)
 	{
-		const math::Vec2<float>& pos = player->GetPos(), dim = player->GetCurrentDims();
+		const math::Vec2<float>& pos = player->GetPos(), dim = player->GetDims();
 
 		// search for a Chunk that contains the player
 		bool found = false;

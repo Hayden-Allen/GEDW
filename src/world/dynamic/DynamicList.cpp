@@ -3,6 +3,7 @@
 #include "Dynamic.h"
 #include "graphics/Renderer.h"
 #include "DrawGroup.h"
+#include "script/Script.h"
 
 namespace engine
 {
@@ -64,8 +65,10 @@ namespace engine
 		if (group->IsEmpty())
 			m_DrawGroups.Remove(group->m_Index);
 	}
-	void DynamicList::Update(QTNode* const root, float delta)
+	void DynamicList::Update(QTNode* const root, ScriptRuntime& rt)
 	{
+		const float delta = rt.renderer->GetFrameDelta();
+		m_DrawGroups.ForEach([this, &rt](DrawGroup* g) { g->RunScripts(*this, rt); });
 		m_DrawGroups.ForEach([this, root](DrawGroup* g) { g->MoveHitboxes(*this, root); });
 		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->ResolveCollisions(*this, delta); });
 		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->Move(*this, delta); });

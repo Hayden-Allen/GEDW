@@ -183,12 +183,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\script\Script.cpp" />
+    <ClCompile Include="src\script\Scriptable.cpp" />
     <ClCompile Include="src\script\ScriptParser.cpp" />
     <ClCompile Include="src\world\Chunk.cpp" />
     <ClCompile Include="src\world\dynamic\DrawGroup.cpp" />
     <ClCompile Include="src\world\dynamic\DrawGroupList.cpp" />
     <ClCompile Include="src\world\dynamic\Dynamic.cpp" />
     <ClCompile Include="src\world\dynamic\DynamicList.cpp" />
+    <ClCompile Include="src\world\dynamic\DynamicBank.cpp" />
     <ClCompile Include="src\world\Map.cpp" />
     <ClCompile Include="src\world\SpriteGroup.cpp" />
     <ClCompile Include="src\world\World.cpp" />
@@ -226,12 +228,15 @@
     <ClInclude Include="src\script\Command.h" />
     <ClInclude Include="src\script\Registers.h" />
     <ClInclude Include="src\script\Script.h" />
+    <ClInclude Include="src\script\Scriptable.h" />
     <ClInclude Include="src\script\ScriptParser.h" />
     <ClInclude Include="src\world\Camera.h" />
     <ClInclude Include="src\world\Chunk.h" />
+    <ClInclude Include="src\world\dynamic\Character.h" />
     <ClInclude Include="src\world\dynamic\DrawGroup.h" />
     <ClInclude Include="src\world\dynamic\DrawGroupList.h" />
     <ClInclude Include="src\world\dynamic\Dynamic.h" />
+    <ClInclude Include="src\world\dynamic\DynamicBank.h" />
     <ClInclude Include="src\world\dynamic\DynamicList.h" />
     <ClInclude Include="src\world\dynamic\IndexedList.h" />
     <ClInclude Include="src\world\Hitbox.h" />
@@ -242,6 +247,8 @@
     <ClInclude Include="src\world\World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\scripts\camera.script" />
+    <None Include="res\scripts\player.script" />
     <None Include="res\scripts\test.script" />
     <None Include="res\shader.glsl" />
     <None Include="res\shader_dynamic.glsl" />

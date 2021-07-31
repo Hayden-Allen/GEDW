@@ -1,0 +1,7 @@
+print:
+	dbgv	$a6
+	ret
+
+main:
+	imp	$a6
+	call print

@@ -2,11 +2,11 @@
 #include "Registers.h"
 #include "Command.h"
 #include "world/World.h"
+#include "Scriptable.h"
 
 namespace engine
 {
 	class ScriptParser;
-	class Scriptable;
 	class Renderer;
 
 
@@ -314,6 +314,81 @@ namespace engine
 			else if (args.v[1])
 				*args.v[1] = PUN(vec, m_Memory[index]);
 			);
+		// ctrl
+		I(beq,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], ROI(args.f[0], *args.v[0])) == ROI(args.i[1], ROI(args.f[1], *args.v[1])))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(beqz,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], ROI(args.f[0], *args.v[0])) == 0)
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(bne,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], ROI(args.f[0], *args.v[0])) != ROI(args.i[1], ROI(args.f[1], *args.v[1])))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(blt,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], *args.f[0]) < ROI(args.i[1], *args.f[1]))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(bgt,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], *args.f[0]) > ROI(args.i[1], *args.f[1]))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(ble,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], *args.f[0]) <= ROI(args.i[1], *args.f[1]))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(bge,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+
+			if (ROI(args.i[0], *args.f[0]) >= ROI(args.i[1], *args.f[1]))
+				m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(j,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+			m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(call,
+			if (!RangeCheck(args.imm1i, 0, m_Instructions.size()))
+				return;
+			StackPush(m_ProgramCounter);
+			m_ProgramCounter = CAST(uint, args.imm1i) - 1;
+		);
+		I(ret,
+			m_ProgramCounter = StackPop<uint>();
+		);
+		I(end,
+			m_Abort = true;
+		);
+		I(slp,
+			m_SleepEnd = current + ROI(args.i[0], args.imm1i);
+			m_Sleeping = true;
+			m_Abort = true;
+		);
+		I(blk,
+			math::sleep(CAST(uint, ROI(args.i[0], args.imm1i)));
+		);
 		// debug
 		I(dbg,
 			printf("[%s]: %lld\n", m_Filepath.c_str(), ROI(args.i[0], args.imm1i));
@@ -327,7 +402,52 @@ namespace engine
 		I(dbgs,
 			printf("[%s]: %s\n", m_Filepath.c_str(), (char*)(m_Memory + ROI(args.i[0], args.imm1i)));
 		);
-
+		// engine
+		I(gettime,
+			*args.f[0] = current;
+		);
+		// engine.input
+		I(imp,
+			*args.v[0] = world->m_Engine->GetCursorPos();
+		);
+		I(ims,
+			*args.v[0] = world->m_Engine->GetScroll();
+		);
+		I(imb,
+			*args.i[1] = CAST(integer, world->m_Engine->IsMousePressed(CAST(uint, ROI(args.i[0], args.imm1i))));
+		);
+		I(ikp,
+			*args.i[1] = CAST(integer, world->m_Engine->IsKeyPressed(CAST(uint, ROI(args.i[0], args.imm1i))));
+		);
+		I(ikd,
+			const integer a = CAST(integer, world->m_Engine->IsKeyPressed(CAST(uint, ROI(args.i[0], args.imm1i))));
+			const integer b = CAST(integer, world->m_Engine->IsKeyPressed(CAST(uint, ROI(args.i[1], args.imm2i))));
+			*args.i[2] = a - b;
+		);
+		// engine.obj
+#define CS (m_Registers.i[Registers::s_RegObj] == s_HostIndex ? host : env[m_Registers.i[Registers::s_RegObj]])
+		I(ogp,
+			*args.v[0] = CS->GetPos();
+		);
+		I(osp,
+			CS->SetPos(*args.v[0]);
+		);
+		I(ogv,
+			*args.v[0] = CS->GetVel();
+		);
+		I(osv,
+			CS->SetVel(*args.v[0]);
+		);
+		I(ogd,
+			*args.v[0] = CS->GetDims();
+		);
+		I(ogs,
+			*args.f[0] = CS->GetSpeed();
+		);
+		I(oss,
+			CS->SetState((char*)(m_Memory + ROI(args.i[0], args.imm1i)));
+		);
+#undef CS
 #undef ROI
 #undef I
 
@@ -407,11 +527,41 @@ namespace engine
 			{ "movy",	{ ArgType::I_F_V_MF, ArgType::V }, &Script::movy },
 			{ "stm",	{ ArgType::I_F_V, ArgType::I_MI }, &Script::stm },
 			{ "ldm",	{ ArgType::I_MI, ArgType::I_F_V }, &Script::ldm },
+			// ctrl
+			{ "beq",	{ ArgType::I_F_V, ArgType::I_F_V, ArgType::L_MI }, &Script::beq },
+			{ "beqz",	{ ArgType::I_F_V, ArgType::L_MI }, &Script::beqz },
+			{ "bne",	{ ArgType::I_F_V, ArgType::I_F_V, ArgType::L_MI }, &Script::bne },
+			{ "blt",	{ ArgType::I_F, ArgType::I_F, ArgType::L_MI }, &Script::blt },
+			{ "bgt",	{ ArgType::I_F, ArgType::I_F, ArgType::L_MI }, &Script::bgt },
+			{ "ble",	{ ArgType::I_F, ArgType::I_F, ArgType::L_MI }, &Script::ble },
+			{ "bge",	{ ArgType::I_F, ArgType::I_F, ArgType::L_MI }, &Script::bge },
+			{ "j",		{ ArgType::L_MI }, &Script::j },
+			{ "call",	{ ArgType::L_MI }, &Script::call },
+			{ "ret",	{ }, &Script::ret },
+			{ "end",	{ }, &Script::end },
+			{ "slp",	{ ArgType::I_MI }, &Script::slp },
+			{ "blk",	{ ArgType::I_MI }, &Script::blk },
 			// debug
 			{ "dbg",	{ ArgType::I_MI }, &Script::dbg },
 			{ "dbgf",	{ ArgType::F_MF }, &Script::dbgf },
 			{ "dbgv",	{ ArgType::V }, &Script::dbgv },
 			{ "dbgs",	{ ArgType::I_MI_MS }, &Script::dbgs },
+			// engine
+			{ "time",	{ ArgType::F }, &Script::gettime },
+			// engine.input
+			{ "imp",	{ ArgType::V }, &Script::imp },
+			{ "ims",	{ ArgType::V }, &Script::ims },
+			{ "imb",	{ ArgType::I_MI, ArgType::I }, &Script::imb },
+			{ "ikp",	{ ArgType::I_MI, ArgType::I }, &Script::ikp },
+			{ "ikd",	{ ArgType::I_MI, ArgType::I_MI, ArgType::I }, &Script::ikd },
+			// engine.obj
+			{ "ogp",	{ ArgType::V }, &Script::ogp },
+			{ "osp",	{ ArgType::V }, &Script::osp },
+			{ "ogv",	{ ArgType::V }, &Script::ogv },
+			{ "osv",	{ ArgType::V }, &Script::osv },
+			{ "ogd",	{ ArgType::V }, &Script::ogd },
+			{ "ogs",	{ ArgType::F }, &Script::ogs },
+			{ "oss",	{ ArgType::I_MI_MS }, &Script::oss },
 		};
 	};
 }

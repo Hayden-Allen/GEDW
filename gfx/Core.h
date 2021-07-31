@@ -68,6 +68,7 @@ namespace gfx
 		bool IsKeyPressed(uint key) const { return IsKey(key, GLFW_PRESS); }
 		bool IsMouseLeft() const { return IsMouse(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS); }
 		bool IsMouseRight() const { return IsMouse(GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS); }
+		bool IsMousePressed(int button) const { return IsMouse(button, GLFW_PRESS); }
 		Vec2 GetCursorPos() const
 		{
 			double x, y;

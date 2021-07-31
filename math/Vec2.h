@@ -192,6 +192,10 @@ namespace math
 		{
 			return { abs(x), abs(y) };
 		}
+		bool IsZero() const
+		{
+			return isZero(x) && isZero(y);
+		}
 	};
 
 

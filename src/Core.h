@@ -18,6 +18,7 @@ namespace engine
 		bool IsKeyPressed(uint key) const { return gl->IsKeyPressed(key); }
 		bool IsMouseLeft() const { return gl->IsMouseLeft(); }
 		bool IsMouseRight() const { return gl->IsMouseRight(); }
+		bool IsMousePressed(int button) const { return gl->IsMousePressed(button); }
 		math::Vec2<float> GetCursorPos() const
 		{
 			auto temp = gl->GetCursorPos();
