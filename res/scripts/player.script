@@ -1,1 +1,48 @@
-dbgs	"TEST"
+main:
+	# bind player
+	mov	$hst, $obj
+	# get x-axis direction
+	ikd	68, 65, $t0
+	# get y-axis direction
+	ikd	87, 83, $t1
+	# create a move direction vector
+	movx	$t0, $v0
+	movy	$t1, $v0
+	# get player's speed
+	ogs	$f0
+	mulv	$v0, $f0, $v0
+	# set player's velocity
+	osv	$v0
+
+
+	# set state
+	beqz	$v0, set_idle
+	# projectile velocity
+	movv	$v0, $v2
+	mulv	$v2, 2., $v2
+	oss	"move"
+	j	set_end
+set_idle:
+	oss	"idle"
+set_end:
+
+
+	# get current time
+	time	$f0
+	# don't spawn if not off cooldown
+	blt	$f0, $f1, no_spawn
+	# only spawn when space is pressed
+	ikp	32, $t0
+	beqz	$t0, no_spawn
+	# set cooldown timer
+	addf	$f0, 1000., $f1
+	# get player's position
+	ogp	$v1
+	# spawn and bind projectile
+	spn	"proj", $obj
+	# set projectile's position to player's position
+	osp	$v1
+	# set projectile's velocity to player's last velocity
+	osv	$v2
+no_spawn:
+	end

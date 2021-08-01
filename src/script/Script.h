@@ -235,10 +235,10 @@ namespace engine
 			*args.f[1] = args.v[0]->Magnitude();
 			);
 		I(ang,
-			*args.f[1] = args.v[0]->Angle();
+			*args.f[1] = math::deg(args.v[0]->Angle());
 			);
 		I(angv,
-			*args.f[2] = args.v[0]->AngleBetween(*args.v[1]);
+			*args.f[2] = math::deg(args.v[0]->AngleBetween(*args.v[1]));
 			);
 		I(norm,
 			*args.v[1] = args.v[0]->Normalized();
@@ -447,6 +447,13 @@ namespace engine
 		I(oss,
 			CS->SetState((char*)(m_Memory + ROI(args.i[0], args.imm1i)));
 		);
+		I(spn,
+			Dynamic* d = world->CreateDynamic((char*)(m_Memory + ROI(args.i[0], args.imm1i)), false);
+			env.push_back((Scriptable*)d);
+			m_Registers.i[Registers::s_RegObjCount]++;
+			m_SpawnQueue.push_back(d);
+			*args.i[1] = env.size() - 1;
+		);
 #undef CS
 #undef ROI
 #undef I
@@ -467,16 +474,16 @@ namespace engine
 		{
 			// math
 			{ "add",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::add },
-			{ "addf",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::addf },
+			{ "addf",	{ ArgType::F, ArgType::F_MF, ArgType::F }, &Script::addf },
 			{ "addv",	{ ArgType::V, ArgType::F_V_MF, ArgType::V }, &Script::addv },
 			{ "sub",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::sub },
-			{ "subf",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::subf },
+			{ "subf",	{ ArgType::F, ArgType::F_MF, ArgType::F }, &Script::subf },
 			{ "subv",	{ ArgType::V, ArgType::F_V_MF, ArgType::V }, &Script::subv },
 			{ "mul",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::mul },
-			{ "mulf",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::mulf },
+			{ "mulf",	{ ArgType::F, ArgType::F_MF, ArgType::F }, &Script::mulf },
 			{ "mulv",	{ ArgType::V, ArgType::F_V_MF, ArgType::V }, &Script::mulv },
 			{ "div",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::div },
-			{ "divf",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::divf },
+			{ "divf",	{ ArgType::F, ArgType::F_MF, ArgType::F }, &Script::divf },
 			{ "divv",	{ ArgType::V, ArgType::F_V_MF, ArgType::V }, &Script::divv },
 			// math.bit
 			{ "and",	{ ArgType::I, ArgType::I_MI, ArgType::I }, &Script::band },
@@ -562,6 +569,7 @@ namespace engine
 			{ "ogd",	{ ArgType::V }, &Script::ogd },
 			{ "ogs",	{ ArgType::F }, &Script::ogs },
 			{ "oss",	{ ArgType::I_MI_MS }, &Script::oss },
+			{ "spn",	{ ArgType::I_MI_MS, ArgType::I }, &Script::spn }
 		};
 	};
 }

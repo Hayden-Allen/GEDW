@@ -65,6 +65,9 @@ namespace engine
 			m_ProgramCounter++;
 		}
 
+		for (Dynamic* spawned : m_SpawnQueue)
+			spawned->AddTo(rt.world->m_Map->GetCurrentQuadTree(), *rt.world->m_DynamicList);
+
 		return m_Registers.i[Registers::s_RegFlags];
 	}
 

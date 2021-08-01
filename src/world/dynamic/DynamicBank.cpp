@@ -15,7 +15,7 @@ namespace engine
 	const DynamicTemplate* const DynamicBank::Get(const std::string& name) const
 	{
 		const auto& it = m_Templates.find(name);
-		if (it != m_Templates.end())
+		if (it == m_Templates.end())
 		{
 			printf("DynamicTemplate '%s' doesn't exist\n", name.c_str());
 			return nullptr;
