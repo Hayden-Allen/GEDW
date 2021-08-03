@@ -19,7 +19,7 @@ main:
 	beqz	$v0, set_idle
 	# projectile velocity
 	movv	$v0, $v2
-	mulv	$v2, 2., $v2
+	mulv	$v2, .5, $v2
 	oss	"move"
 	j	set_end
 set_idle:
@@ -38,9 +38,27 @@ set_end:
 	addf	$f0, 1000., $f1
 	# get player's position
 	ogp	$v1
+
+	# get velocity direction
+	movv	$v2, $v3
+	signv	$v3, $v3
+	# get half of player's dimensions
+	ogd	$v4
+	mulv	$v4, .5, $v4
+
 	# spawn and bind projectile
 	spn	"proj", $obj
-	# set projectile's position to player's position
+
+	# get half of projectile's dimensions
+	ogd	$v5
+	mulv	$v5, .5, $v5
+	# add half dimensions and multiply by velocity direction
+	addv	$v4, $v5, $v4
+	mulv	$v3, $v4, $v3
+	# add result to position
+	addv	$v1, $v3, $v1
+
+	# set projectile's position to computed position
 	osp	$v1
 	# set projectile's velocity to player's last velocity
 	osv	$v2

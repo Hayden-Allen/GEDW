@@ -69,9 +69,10 @@ namespace engine
 	{
 		const float delta = rt.renderer->GetFrameDelta();
 		m_DrawGroups.ForEach([this, &rt](DrawGroup* g) { g->RunScripts(*this, rt); });
+		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->Move(*this, delta); });
 		m_DrawGroups.ForEach([this, root](DrawGroup* g) { g->MoveHitboxes(*this, root); });
 		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->ResolveCollisions(*this, delta); });
-		m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->Move(*this, delta); });
+		/*m_DrawGroups.ForEach([this, delta](DrawGroup* g) { g->Move(*this, delta); });*/
 	}
 	void DynamicList::Draw(Renderer& renderer)
 	{

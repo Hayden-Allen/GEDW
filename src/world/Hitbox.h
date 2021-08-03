@@ -20,8 +20,60 @@ namespace engine
 
 		void ResolveCollision(const CollisionInfo& info) override
 		{
-			// bad hacky math. Removes enough velocity such that the collision won't happen in the first place
-			m_Vel += info.normal * m_Vel.Abs() * (1 - info.time);
+			const auto& op = info.element->GetPos(), od = info.element->GetDim();
+			const float distances[4] =
+			{
+				// top
+				math::abs(m_Pos.y - (op.y + od.y)),
+				// left
+				math::abs((m_Pos.x + m_Dim.x) - op.x),
+				// bottom
+				math::abs((m_Pos.y + m_Dim.y) - op.y),
+				// right
+				math::abs(m_Pos.x - (op.x + od.x))
+			};
+
+			// determine which direction a collision is most likely to occur from
+			uint min = 0;
+			for (uint i = 1; i < 4; i++)
+				min = (distances[i] < distances[min] ? i : min);
+
+			// if this overlaps info.element on the x-axis
+			if (m_Pos.x + m_Dim.x >= op.x && m_Pos.x <= op.x + od.x)
+			{
+				// collision between bottom of this and top of info.element
+				if (min == 0 && m_Pos.y < op.y + od.y)
+				{
+					m_Pos.y = op.y + od.y;
+					info.element->SetVel({ info.element->GetVel().x, 0.f });
+					m_Vel.y = 0.f;
+				}
+				// collision between top of this and bottom of info.element
+				if (min == 2 && m_Pos.y + m_Dim.y > op.y)
+				{
+					m_Pos.y = op.y - m_Dim.y;
+					info.element->SetVel({ info.element->GetVel().x, 0.f });
+					m_Vel.y = 0.f;
+				}
+			}
+			// if this overlaps info.element on the y-axis
+			if (m_Pos.y + m_Dim.y >= op.y && m_Pos.y <= op.y + od.y)
+			{
+				// collision between right of this and left of info.element
+				if (min == 1 && m_Pos.x + m_Dim.x > op.x)
+				{
+					m_Pos.x = op.x - m_Dim.x;
+					info.element->SetVel({ 0.f, info.element->GetVel().y });
+					m_Vel.x = 0.f;
+				}
+				// collision between left of this and right of info.element
+				if (min == 3 && m_Pos.x < op.x + od.x)
+				{
+					m_Pos.x = op.x + od.x;
+					info.element->SetVel({ 0.f, info.element->GetVel().y });
+					m_Vel.x = 0.f;
+				}
+			}
 		}
 	private:
 		constexpr static math::RangeOverlapsParams s_OverlapsParams = { .left = { true, true }, .right = { true, true } };
@@ -34,8 +86,7 @@ namespace engine
 		}
 		bool Intersects(const QuadTreeElement* const other, float delta, math::Vec2<float>* const normal, math::Vec2<float>* const contact, float* const time) const override
 		{
-			// cast a ray from the middle of this hitbox at the other hitbox
-			return math::Ray(m_Pos + m_Dim / 2.f, m_Vel * delta).IntersectsRect(other->GetPos() - m_Dim / 2.f, other->GetDim() + m_Dim, normal, contact, time);
+			return math::rectIntersect(m_Pos, m_Dim, other->GetPos(), other->GetDim(), s_OverlapsParams);
 		}
 	};
 }

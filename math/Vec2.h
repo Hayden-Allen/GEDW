@@ -26,7 +26,7 @@ namespace math
 
 		bool operator==(const T& t) const
 		{
-			return isZero(x - t) && isZero(y - t);
+			return x == t && y == t;
 		}
 		// short circuit if x != other.x
 		bool operator==(const Vec2<T>& other) const

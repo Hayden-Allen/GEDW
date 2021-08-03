@@ -38,19 +38,19 @@ namespace engine
 		// update hitbox with current values
 		m_Hitbox->Move(m_Pos - m_Dim / 2.f, m_Dim, m_Vel, root);
 	}
-	void Dynamic::ResolveCollisions(float delta)
+	void Dynamic::ResolveCollisions(float delta, DynamicList& list)
 	{
 		m_Hitbox->Update(delta);
 
 		// copy "resolved" values from the hitbox
 		SetVel(m_Hitbox->GetVel());
 		SetPos(m_Hitbox->GetPos() + m_Hitbox->GetDim() / 2.f);
-	}
-	void Dynamic::Update(float delta, DynamicList& list)
-	{
-		m_Pos += m_Vel * delta;
 		UpdateVertices();
 		list.Update(m_Handle.list);
+	}
+	void Dynamic::Update(float delta)
+	{
+		m_Pos += m_Vel * delta;
 	}
 
 

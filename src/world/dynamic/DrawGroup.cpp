@@ -55,7 +55,7 @@ namespace engine
 	}
 	void DrawGroup::Move(DynamicList& list, float delta) const
 	{
-		ForEach([&list, delta](uint i) { list.m_List[i]->Update(delta, list); });
+		ForEach([&list, delta](uint i) { list.m_List[i]->Update(delta); });
 	}
 	void DrawGroup::MoveHitboxes(DynamicList& list, QTNode* const root) const
 	{
@@ -63,7 +63,7 @@ namespace engine
 	}
 	void DrawGroup::ResolveCollisions(DynamicList& list, float delta) const
 	{
-		ForEach([&list, delta](uint i) { list.m_List[i]->ResolveCollisions(delta); });
+		ForEach([&list, delta](uint i) { list.m_List[i]->ResolveCollisions(delta, list); });
 	}
 	void DrawGroup::Draw(DynamicList& list, Renderer& renderer) const
 	{

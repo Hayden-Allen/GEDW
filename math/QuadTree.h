@@ -130,6 +130,14 @@ namespace math
 		{
 			return m_Dim;
 		}
+		const void SetPos(const math::Vec2<float>& pos)
+		{
+			m_Pos = pos;
+		}
+		const void SetVel(const math::Vec2<float>& vel)
+		{
+			m_Vel = vel;
+		}
 	protected:
 		constexpr static uint s_MapReserveSize = THRESHOLD * THRESHOLD * THRESHOLD;
 		// position, size, and velocity of the "host" object
@@ -446,6 +454,7 @@ namespace math
 					// mark it as a collision if there's an intersection
 					if (Intersects(cur, delta, &normal, &contact, &time))
 						collisions.emplace(time, CollisionInfo(cur, normal, contact, time));
+
 					// regardless, mark it as checked
 					m_Checked.insert(cur);
 				}

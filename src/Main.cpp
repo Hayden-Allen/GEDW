@@ -15,7 +15,6 @@ int main()
 	Renderer renderer("res/shader_texture.glsl", "res/shader_dynamic.glsl", &engine);
 	World world(&engine, "res/map.txt");
 
-
 	Sprite* s1 = world.PutSprite("res/move.bmp", 1, 0);
 	Sprite* s2 = world.PutSprite("res/idle.bmp", 1, 0);
 	Character* player = world.CreateCharacter("res/scripts/player.script", { 0.f, 0.f }, { 0.f, 0.f }, 100.f, { {"move", s1}, {"idle", s2} }, "idle");

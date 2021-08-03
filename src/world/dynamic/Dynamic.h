@@ -35,8 +35,8 @@ namespace engine
 
 		const std::unordered_map<std::string, int64_t>& RunScripts(ScriptRuntime& rt) override;
 		void MoveHitbox(QTNode* const root);
-		void ResolveCollisions(float delta);
-		void Update(float delta, DynamicList& list);
+		void ResolveCollisions(float delta, DynamicList& list);
+		void Update(float delta);
 		Sprite* const GetCurrentSprite() const
 		{
 			return GetCurrentState<Sprite>();
